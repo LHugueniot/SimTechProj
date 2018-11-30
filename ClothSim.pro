@@ -1,0 +1,4 @@
+TEMPLATE=subdirs
+SUBDIRS+=ClothLib
+SUBDIRS+=SimpleNGL
+SUBDIRS+=TestCloth

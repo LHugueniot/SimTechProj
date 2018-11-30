@@ -2,6 +2,10 @@
 #define CLOTHSIMLIB_GLOBAL_H
 
 #include <QtCore/qglobal.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <glm/glm.hpp>
+#include <vector>
 
 #if defined(CLOTHSIMLIB_LIBRARY)
 #  define CLOTHSIMLIBSHARED_EXPORT Q_DECL_EXPORT

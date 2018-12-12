@@ -3,7 +3,15 @@
 
 ClothSim::ClothSim(int _width, int _length, float _patchsize)
 {
-
+    m_initpatchsize = _patchsize;
+    m_width = _width;
+    m_length = _length;
+    m_pnum =m_length * m_width;
+    for(int i=0; i<m_pnum; i++)
+    {
+        auto a =glm::vec3(0,0,0);
+        m_ppos.push_back(a);
+    }
 }
 
 ClothSim::~ClothSim()

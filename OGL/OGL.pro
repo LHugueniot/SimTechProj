@@ -1,16 +1,15 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2018-11-22T18:38:35
+# Project created by QtCreator 2018-12-23T17:36:58
 #
 #-------------------------------------------------
 
-QT       -= gui
+QT       += core gui opengl
 
-TARGET = ClothSimLib
-TEMPLATE = lib
-#CONFIG+= staticlibl
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-DEFINES += CLOTHSIMLIB_LIBRARY
+TARGET = OGL
+TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -23,14 +22,27 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+INCLUDEPATH+= /usr/local/bin/ ../ClothLib/
+
 SOURCES += \
-        clothsimlib.cpp
+        main.cpp \
+        mainwindow.cpp \
+    glwidget.cpp \
+    mesh.cpp
 
 HEADERS += \
-        clothsimlib.h \
-        clothsimlib_global.h 
+        mainwindow.h \
+    glwidget.h \
+    mesh.h
 
-unix {
-    target.path = /usr/lib
-    INSTALLS += target
-}
+FORMS += \
+        mainwindow.ui
+LIBS += -lglut -lGL -lGLU#-lassimp
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../ClothLib/release/ -lClothSimLib
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../ClothLib/debug/ -lClothSimLib
+else:unix: LIBS += -L$$OUT_PWD/../ClothLib/ -lClothSimLib
+
+INCLUDEPATH += $$PWD/../ClothLib
+DEPENDPATH += $$PWD/../ClothLib
+

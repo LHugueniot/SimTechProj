@@ -2,6 +2,7 @@
 #define CLOTHSIMLIB_GLOBAL_H
 
 #include <QtCore/qglobal.h>
+#include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
 #include <glm/glm.hpp>

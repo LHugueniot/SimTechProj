@@ -9,7 +9,7 @@ class CLOTHSIMLIBSHARED_EXPORT distConstraint
 {
 public:
     distConstraint(PBDObj* pbdobj, int _pA, int _pB);
-
+    ~distConstraint();
     float rLength;
     float k;
 };

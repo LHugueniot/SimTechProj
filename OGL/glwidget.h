@@ -10,7 +10,7 @@
 #include <QTimer>
 #include <glm/glm.hpp>
 
-#include <clothsimlib.h>
+#include <clothobj.h>
 
 class GLWidget : public QGLWidget
 {
@@ -20,7 +20,7 @@ public:
     void initializeGL();
     void paintGL();
     void resizeGL(int w, int h);
-    PBD::ClothSim Cloth;
+    PBD::ClothObj Cloth;
 private:
     QTimer timer;
 };

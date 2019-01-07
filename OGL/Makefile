@@ -925,6 +925,7 @@ moc_glwidget.cpp: ../../../../Qt/5.9.1/gcc_64/include/QtCore/QObject \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/QTimer \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qtimer.h \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qbasictimer.h \
+		../ClothLib/clothobj.h \
 		../ClothLib/clothsimlib.h \
 		../ClothLib/clothsimlib_global.h \
 		glwidget.h \
@@ -1057,6 +1058,7 @@ ui_mainwindow.h: mainwindow.ui \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/QTimer \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qtimer.h \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qbasictimer.h \
+		../ClothLib/clothobj.h \
 		../ClothLib/clothsimlib.h \
 		../ClothLib/clothsimlib_global.h
 	/home/lhug/Qt/5.9.1/gcc_64/bin/uic mainwindow.ui -o ui_mainwindow.h
@@ -1455,6 +1457,7 @@ glwidget.o: glwidget.cpp glwidget.h \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/QTimer \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qtimer.h \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qbasictimer.h \
+		../ClothLib/clothobj.h \
 		../ClothLib/clothsimlib.h \
 		../ClothLib/clothsimlib_global.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o glwidget.o glwidget.cpp

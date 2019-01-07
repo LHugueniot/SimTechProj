@@ -1,6 +1,7 @@
 //#include "clothsimlib_global.h"
 
 #include <clothsimlib.h>
+#include <clothobj.h>
 #include <gtest/gtest.h>
 
 int main(int argc, char **argv)
@@ -21,9 +22,9 @@ int main(int argc, char **argv)
 
 //}
 
-TEST(ClothSim, makeMesh)
+TEST(ClothObj, makeMesh)
 {
-    PBD::ClothSim c;
+    PBD::ClothObj c;
     c.makeMesh(glm::vec3(0,0,0),3,3,0.5);
     EXPECT_EQ(c.m_initpatchsize,0.5);
     EXPECT_EQ(c.m_width,3);
@@ -43,6 +44,10 @@ TEST(PBD , makeTriangle)
     EXPECT_EQ(PBD::makeTriangle(glm::vec3(1,1,0), 0.5).c, triangle.c);
 }
 
+TEST(distConstraint, default ctr)
+{
+
+}
 //TEST(ClothSim, triMirror)
 //{
 //    PBD::ClothSim c;

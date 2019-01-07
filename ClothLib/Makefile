@@ -50,8 +50,12 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = clothsimlib.cpp 
-OBJECTS       = clothsimlib.o
+SOURCES       = clothsimlib.cpp \
+		clothobj.cpp \
+		distconstraint.cpp 
+OBJECTS       = clothsimlib.o \
+		clothobj.o \
+		distconstraint.o
 DIST          = ../../../../Qt/5.9.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../../Qt/5.9.1/gcc_64/mkspecs/common/unix.conf \
 		../../../../Qt/5.9.1/gcc_64/mkspecs/common/linux.conf \
@@ -230,7 +234,11 @@ DIST          = ../../../../Qt/5.9.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../../Qt/5.9.1/gcc_64/mkspecs/features/yacc.prf \
 		../../../../Qt/5.9.1/gcc_64/mkspecs/features/lex.prf \
 		ClothLib.pro clothsimlib.h \
-		clothsimlib_global.h clothsimlib.cpp
+		clothsimlib_global.h \
+		clothobj.h \
+		distconstraint.h clothsimlib.cpp \
+		clothobj.cpp \
+		distconstraint.cpp
 QMAKE_TARGET  = ClothSimLib
 DESTDIR       = 
 TARGET        = libClothSimLib.so.1.0.0
@@ -633,8 +641,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../../../Qt/5.9.1/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents clothsimlib.h clothsimlib_global.h $(DISTDIR)/
-	$(COPY_FILE) --parents clothsimlib.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents clothsimlib.h clothsimlib_global.h clothobj.h distconstraint.h $(DISTDIR)/
+	$(COPY_FILE) --parents clothsimlib.cpp clothobj.cpp distconstraint.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -704,6 +712,58 @@ clothsimlib.o: clothsimlib.cpp clothsimlib.h \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qnumeric.h \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qversiontagging.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o clothsimlib.o clothsimlib.cpp
+
+clothobj.o: clothobj.cpp clothobj.h \
+		clothsimlib.h \
+		clothsimlib_global.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qglobal.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qconfig.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qtcore-config.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qsystemdetection.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qprocessordetection.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qtypeinfo.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qsysinfo.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qlogging.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qflags.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qatomic.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qbasicatomic.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qgenericatomic.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qglobalstatic.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qmutex.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qnumeric.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qversiontagging.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o clothobj.o clothobj.cpp
+
+distconstraint.o: distconstraint.cpp distconstraint.h \
+		clothsimlib.h \
+		clothsimlib_global.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qglobal.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qconfig.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qtcore-config.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qsystemdetection.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qprocessordetection.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qtypeinfo.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qsysinfo.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qlogging.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qflags.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qatomic.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qbasicatomic.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qgenericatomic.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qglobalstatic.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qmutex.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qnumeric.h \
+		../../../../Qt/5.9.1/gcc_64/include/QtCore/qversiontagging.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o distconstraint.o distconstraint.cpp
 
 ####### Install
 

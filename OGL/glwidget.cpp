@@ -18,7 +18,7 @@ void GLWidget::initializeGL()
     glEnable(GL_COLOR_MATERIAL);
 
 
-    Cloth.makeMesh(glm::vec3(-5 ,0,0),6,4,0.5);
+    Cloth.makeMesh(glm::vec3(0 ,0,0),6,4,0.5);
     //Cloth.makeSmolMesh(glm::vec3(0,0,0), 0.5);
 }
 

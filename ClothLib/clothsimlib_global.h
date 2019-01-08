@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <glm/glm.hpp>
 #include <vector>
-
+#include <memory>
 #if defined(CLOTHSIMLIB_LIBRARY)
 #  define CLOTHSIMLIBSHARED_EXPORT Q_DECL_EXPORT
 #else

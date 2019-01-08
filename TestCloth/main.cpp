@@ -55,6 +55,7 @@ TEST(distConstraint, ctr)
     EXPECT_EQ(dc.rLength, 0.5);
 
 }
+
 //TEST(ClothSim, triMirror)
 //{
 //    PBD::ClothSim c;

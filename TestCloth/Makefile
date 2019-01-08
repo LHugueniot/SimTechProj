@@ -665,8 +665,7 @@ compiler_clean: compiler_moc_predefs_clean
 
 ####### Compile
 
-main.o: main.cpp ../ClothLib/clothsimlib.h \
-		../ClothLib/clothsimlib_global.h \
+main.o: main.cpp ../ClothLib/clothsimlib_global.h \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qglobal.h \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qconfig.h \
@@ -688,7 +687,9 @@ main.o: main.cpp ../ClothLib/clothsimlib.h \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qmutex.h \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qnumeric.h \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qversiontagging.h \
-		../ClothLib/clothobj.h
+		../ClothLib/clothsimlib.h \
+		../ClothLib/clothobj.h \
+		../ClothLib/distconstraint.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 ####### Install

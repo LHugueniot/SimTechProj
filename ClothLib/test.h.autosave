@@ -39,6 +39,8 @@ public:
 private:
 };
 
+//---------------------------------Constraint stuff------------------------
+
 class Constraint
 {
 public:
@@ -52,6 +54,8 @@ public:
     float restLength;
     float m_pConRes;
 };
+
+//--------------------------------One class to rule them all----------------
 
 class PBDobj
 {

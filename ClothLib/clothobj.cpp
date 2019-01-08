@@ -37,10 +37,19 @@ void ClothObj::makeSmolMesh(glm::vec3 _pos, float _patchsize)
     m_ppos.push_back(tri1.a);
     m_ppos.push_back(tri1.b);
     m_ppos.push_back(tri1.c);
+
+    std::cout<<"glm::vec3("<<tri1.a.x<<", "<<tri1.a.y<<", "<<tri1.a.x<<"), ";
+    std::cout<<"glm::vec3("<<tri1.b.x<<", "<<tri1.b.y<<", "<<tri1.b.x<<"), ";
+    std::cout<<"glm::vec3("<<tri1.c.x<<", "<<tri1.c.y<<", "<<tri1.c.x<<"), \n";
+
     auto tri2=triMirror(tri1, m_patchsize);
     m_ppos.push_back(tri2.a);
     m_ppos.push_back(tri2.b);
     m_ppos.push_back(tri2.c);
+
+    std::cout<<"glm::vec3("<<tri2.a.x<<", "<<tri2.a.y<<", "<<tri2.a.x<<"), ";
+    std::cout<<"glm::vec3("<<tri2.b.x<<", "<<tri2.b.y<<", "<<tri2.b.x<<"), ";
+    std::cout<<"glm::vec3("<<tri2.c.x<<", "<<tri2.c.y<<", "<<tri2.c.x<<"), \n";
 
 }
 

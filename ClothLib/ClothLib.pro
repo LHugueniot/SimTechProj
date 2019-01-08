@@ -26,13 +26,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         clothsimlib.cpp \
     clothobj.cpp \
-    distconstraint.cpp
+    distconstraint.cpp \
+    test.cpp
 
 HEADERS += \
         clothsimlib.h \
         clothsimlib_global.h \ 
     clothobj.h \
-    distconstraint.h
+    distconstraint.h \
+    test.h
 
 unix {
     target.path = /usr/lib

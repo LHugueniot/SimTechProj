@@ -17,9 +17,7 @@ void GLWidget::initializeGL()
     glEnable(GL_LIGHTING);
     glEnable(GL_COLOR_MATERIAL);
 
-
-    Cloth.makeMesh(glm::vec3(0 ,0,0),6,4,0.5);
-    //Cloth.makeSmolMesh(glm::vec3(0,0,0), 0.5);
+    Cloth.initialize(glm::vec3(0,0,0), 3, 3, 0.5);
 }
 
 void GLWidget::paintGL()
@@ -37,34 +35,30 @@ void GLWidget::paintGL()
 //    glColor3f(1, 1, 0);
 //    glVertex3f(1,1,0);
 //    glEnd();
-    for(int i=0; i<Cloth.m_ppos.size();i++)
-    {
-        //std::cout<<Cloth.m_ppos[i].x<<" "<<Cloth.m_ppos[i].y<<" "<<Cloth.m_ppos[i].z<<"\n";
-    }
-
-    for(uint i=0; i<Cloth.m_ppos.size()/3; i++)
+    /*
+    for(uint i=0; i<Cloth.m_PointsPtr->m_ppos.size()/3; i++)
     {
             int a=i*3;
             glBegin(GL_TRIANGLES);
             glColor3f(1, 0, 0);
-            glVertex3f(Cloth.m_ppos[a].x, Cloth.m_ppos[a].y, Cloth.m_ppos[a].z);
+            glVertex3f(Cloth.m_PointsPtr->m_ppos[a].x, Cloth.m_PointsPtr->m_ppos[a].y, Cloth.m_PointsPtr->m_ppos[a].z);
             //glNormal3f(1,1,1);
 
             glColor3f(0, 1, 0);
-            glVertex3f(Cloth.m_ppos[a+1].x, Cloth.m_ppos[a+1].y, Cloth.m_ppos[a+1].z);
+            glVertex3f(Cloth.m_PointsPtr->m_ppos[a+1].x, Cloth.m_PointsPtr->m_ppos[a+1].y, Cloth.m_PointsPtr->m_ppos[a+1].z);
             //glNormal3f(0,0,0);
 
             glColor3f(0, 0, 1);
-            glVertex3f(Cloth.m_ppos[a+2].x, Cloth.m_ppos[a+2].y, Cloth.m_ppos[a+2].z);
+            glVertex3f(Cloth.m_PointsPtr->m_ppos[a+2].x, Cloth.m_PointsPtr->m_ppos[a+2].y, Cloth.m_PointsPtr->m_ppos[a+2].z);
             //glNormal3f(0,0,0);
             glEnd();
             //std::cout<<i<<"\n";
     }
-
-    //glTranslatef(0 , 0.01, 0);
+    */
     //important functions
     //glRotatef(0.5,1,1,1);
     //glutSolidTeapot(0.8);
+    //glTranslatef(0 , 0.01, 0);
 
 }
 void GLWidget::resizeGL(int w, int h)

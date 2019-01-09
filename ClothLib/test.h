@@ -14,56 +14,85 @@ struct Tri
 Tri makeTriangle(glm::vec3 _pos, float _patchsize);
 Tri triMirror(Tri _patch,float _patchsize );
 
+bool aproximateVec3(glm::vec3 a, glm::vec3 b, float dif);
 
 //---------------------------------Point stuff-----------------------------
 
-class Points
+class Point
 {
 public:
-    Points();
-    ~Points();
+    Point(glm::vec3 _pos,glm::vec3 _pvel , float _pmass);
+    ~Point();
+    void update();
 
-    float PointMass(int _vecindex)      const;  //get point mass
-    glm::vec3 PointPos(int _vecindex)   const;  //get point position
-    glm::vec3 PointVel(int _vecindex)   const;  //get point velocity
-
-    void setPointMass(int _vecindex,float _mass);       //set point mass
-    void setPointPos(int _vecindex, glm::vec3 _pos);    //set point position
-    void setPointVel(int _vecindex, glm::vec3 _vel);    //set point velocity
-
-    std::vector<float> m_pmass;         //vector storing point masses
-    std::vector<glm::vec3> m_ppos;      //vector storing point positions
-    std::vector<glm::vec3> m_pvel;      //vector storing point velocities
+    float m_pmass;         //vector storing point masses
+    glm::vec3 m_ppos;      //vector storing point positions
+    glm::vec3 m_pvel;      //vector storing point velocities
 
 
 private:
 };
 
-class Constraint
+//---------------------------------Constraint stuff------------------------
+
+class DistanceConstraint
 {
 public:
-    Constraint(Points* _points, int _pAindex, int _pBindex, float _pConRes);
-    ~Constraint();
+    DistanceConstraint(Point* _pA, Point* _pB);
+    ~DistanceConstraint();
 
-    void update();
-    Points* points;
-    int m_pA;
-    int m_pB;
-    float restLength;
-    float m_pConRes;
+    virtual void update();
+    Point* m_pA;
+    Point* m_pB;
+    float m_restLength;
 };
+
+class BendingConstraint
+{
+public:
+    BendingConstraint(Point* _pA, Point* _pB, Point* _pC);
+    ~BendingConstraint();
+
+    virtual void update();
+    Point* m_pA;
+    Point* m_pB;
+    Point* m_pC;
+    float m_restAngle;
+};
+
+//--------------------------------One class to rule them all----------------
 
 class PBDobj
 {
 public:
-    PBDobj(std::vector<Constraint *> _ConPtrs, Points* _PointsPtr);
+    PBDobj();
     ~PBDobj();
 
-    void addConstraint(Constraint* m_Constraint);
+    void addConstraint(DistanceConstraint *m_Constraint);
     void initialize(glm::vec3 _pos,int _width, int _height, float _patchsize);
     void runSolver(float dt);
-
-    Points* m_PointsPtr;
-    std::vector<Constraint *> m_ConPtrs;
+    int m_width;
+    int m_height;
+    float m_patchsize;
+    std::vector<Point*> m_PointsPtr;
+    std::vector<DistanceConstraint *> m_ConPtrs;
 };
+
+class PBDtoGLobj
+{
+public:
+
+    struct triPointer
+    {
+        Point* p1;
+        Point* p2;
+        Point* p3;
+    };
+    PBDtoGLobj(PBDobj* _PBDobj){m_PBDObj=_PBDobj;}
+    ~PBDtoGLobj();
+
+    PBDobj* m_PBDObj;
+    std::vector<triPointer> GLpoints;
+};
+
 #endif // TEST_H

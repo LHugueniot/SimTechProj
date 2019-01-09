@@ -689,7 +689,8 @@ main.o: main.cpp ../ClothLib/clothsimlib_global.h \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qversiontagging.h \
 		../ClothLib/clothsimlib.h \
 		../ClothLib/clothobj.h \
-		../ClothLib/distconstraint.h
+		../ClothLib/distconstraint.h \
+		../ClothLib/test.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 ####### Install

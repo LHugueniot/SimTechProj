@@ -1,5 +1,22 @@
 #include "test.h"
 
+bool aproximateVec3(glm::vec3 a, glm::vec3 b, float dif)
+{
+    if(a.x+dif>(b.x) && a.x-dif<(b.x))
+    {
+        if(a.y+dif>(b.y) && a.y-dif<(b.y))
+        {
+            if(a.z+dif>(b.z) && a.z-dif<(b.z))
+            {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+    return false;
+}
+
 //------------------------------------------triangle stuff----------------------------
 
 Tri makeTriangle(glm::vec3 _pos, float _patchsize )
@@ -25,75 +42,50 @@ Tri triMirror(Tri _patch,float _patchsize )
 
 
 //-------------------------------------------points functions-------------------------
-Points::Points()
+Point::Point(glm::vec3 _pos,glm::vec3 _pvel , float _pmass)
 {
-
+    m_ppos=_pos;
+    m_pvel=_pvel;
+    m_pmass=_pmass;
 }
 
-float Points::PointMass(int _vecindex) const
+Point::~Point()
 {
-    int m_vecindex=_vecindex;
-    return m_pmass[m_vecindex];
 }
 
-glm::vec3 Points::PointPos(int _vecindex) const
+void Point::update()
 {
-    int m_vecindex=_vecindex;
-    return m_ppos[m_vecindex];
-}
-
-glm::vec3 Points::PointVel(int _vecindex) const
-{
-    int m_vecindex=_vecindex;
-    return m_pvel[m_vecindex];
-}
-
-void Points::setPointMass(int _vecindex, float _mass)
-{
-    int m_vecindex=_vecindex;
-    float m_mass=_mass;
-    m_pmass[m_vecindex]=m_mass;
-}
-
-void Points::setPointPos(int _vecindex, glm::vec3 _pos)
-{
-    int m_vecindex=_vecindex;
-    glm::vec3 m_pos=_pos;
-    m_ppos[m_vecindex]=m_pos;
-
-}
-void Points::setPointVel(int _vecindex, glm::vec3 _vel)
-{
-    int m_vecindex=_vecindex;
-    glm::vec3 m_vel=_vel;
-    m_ppos[m_vecindex]=m_vel;
+    m_pvel=+m_pvel*m_pmass;
 }
 
 //----------------------------------------Constraint functions------------------------------
 
-Constraint::Constraint(Points* _points, int _pAindex, int _pBindex, float _pConRes)
+DistanceConstraint::DistanceConstraint(Point *_pA, Point *_pB)
 {
-    m_pA=_pAindex;
-    m_pB=_pBindex;
-    restLength=(_points->m_ppos[m_pA] - _points->m_ppos[m_pA]).length();
+    m_pA=_pA;
+    m_pB=_pB;
+    m_restLength=(m_pA->m_ppos - m_pA->m_ppos).length();
 }
 
-Constraint::~Constraint()
+void DistanceConstraint::update()
 {
 
 }
 
-void Constraint::update()
+BendingConstraint::BendingConstraint(Point *_pA, Point *_pB, Point *_pC)
+{
+
+}
+
+void BendingConstraint::update()
 {
 
 }
 
 //---------------------------------------One class to rule them all-------------------------
 
-PBDobj::PBDobj(std::vector<Constraint*> _ConPtrs, Points* _PointsPtr)
+PBDobj::PBDobj()
 {
-    m_ConPtrs = _ConPtrs;
-    m_PointsPtr = _PointsPtr;
 }
 
 PBDobj::~PBDobj()
@@ -101,125 +93,59 @@ PBDobj::~PBDobj()
 
 }
 
-void PBDobj::addConstraint(Constraint* m_Constraint)
+void PBDobj::addConstraint(DistanceConstraint* m_Constraint)
 {
     m_ConPtrs.push_back(m_Constraint);
 }
 
-void PBDobj::initialize(glm::vec3 _pos,int _width, int _height, float _patchsize)
+void PBDobj::initialize(glm::vec3 _pos, int _width, int _height, float _patchsize)
 {
-
-    auto m_pos=_pos;
-    auto m_patchsize = _patchsize;
-    auto m_width=_width;
-    auto m_height=_height;
-    for(int i=0; i<m_width; i++)
+    m_patchsize = _patchsize;
+    m_width=_width;
+    m_height=_height;
+    for(uint i=0; i<m_width; i++)
     {
-        for(int j=0;j<m_height; j++)
+        for(uint j=0;j<m_height; j++)
         {
-//            auto tri1=makeTriangle(m_pos, m_patchsize);
-//            m_PointsPtr->m_ppos.push_back(tri1.a);
-//            m_PointsPtr->m_ppos.push_back(tri1.b);
-//            m_PointsPtr->m_ppos.push_back(tri1.c);
-//            auto tri2=triMirror(tri1, m_patchsize);
-//            m_PointsPtr->m_ppos.push_back(tri2.a);
-//            m_PointsPtr->m_ppos.push_back(tri2.b);
-//            m_PointsPtr->m_ppos.push_back(tri2.c);
-            m_PointsPtr->m_ppos.push_back(glm::vec3(i*m_patchsize, j*m_patchsize, 0);
-            m_PointsPtr->m_pmass.push_back(1);
-            m_PointsPtr->m_pvel.push_back(0);
+            //            auto tri1=makeTriangle(m_pos, m_patchsize);
+            //            m_PointsPtr->m_ppos.push_back(tri1.a);
+            //            m_PointsPtr->m_ppos.push_back(tri1.b);
+            //            m_PointsPtr->m_ppos.push_back(tri1.c);
+            //            auto tri2=triMirror(tri1, m_patchsize);
+            //            m_PointsPtr->m_ppos.push_back(tri2.a);
+            //            m_PointsPtr->m_ppos.push_back(tri2.b);
+            //            m_PointsPtr->m_ppos.push_back(tri2.c);
+            Point * newp = new Point(glm::vec3(i*m_patchsize, j*m_patchsize,0),glm::vec3(0,0,0), 1);
+            m_PointsPtr.push_back(newp);
         }
     }
-    for(int i=0; i<m_PointsPtr->m_ppos.size(); i++)
+
+    for(uint i=0 ;i< m_PointsPtr.size(); i++)
     {
-        if(i!=0 && i%6 ==0)
+        for(uint j=0 ;j< m_PointsPtr.size(); j++)
         {
-            Constraint* _Con1= new Constraint(m_PointsPtr, i, i+1,1.0f);
-            addConstraint(_Con1);
-            Constraint* _Con2= new Constraint(m_PointsPtr, i+1, i+2,0.5f);
-            addConstraint(_Con2);
-            Constraint* _Con3= new Constraint(m_PointsPtr, i+2, i,1.0f);
-            addConstraint(_Con3);
-            Constraint* _Con4= new Constraint(m_PointsPtr, i+1, i+4,1.0f);
-            addConstraint(_Con4);
-            Constraint* _Con5= new Constraint(m_PointsPtr, i+4 ,i+2,1.0f);
-            addConstraint(_Con5);
+            auto a0 = m_PointsPtr.at(i)->m_ppos;
+            auto b0 = m_PointsPtr.at(j)->m_ppos;
+            auto a1 = a0+ glm::vec3(m_patchsize, 0, 0);
+            auto a2 = a0+ glm::vec3(0, m_patchsize, 0);
+            auto a3 = a0+ glm::vec3(m_patchsize, m_patchsize, 0);
+            if(aproximateVec3(b0,a1,0.05)==true ||
+                    aproximateVec3(b0,a2,0.05) ||
+                    aproximateVec3(b0,a3,0.05))
+            {
+                DistanceConstraint* _Con= new DistanceConstraint(m_PointsPtr[i], m_PointsPtr[j]);
+                addConstraint(_Con);
+            }
+
         }
     }
-    /*
-    glm::vec3 point[] = //{glm::vec3(0,0,0),glm::vec3(0,0,0)};
+    for(uint p=0; p<m_ConPtrs.size(); p++)
     {
-    glm::vec3(0, 0, 0), glm::vec3(0.5, 0, 0.5), glm::vec3(0, 0.5, 0),
-    glm::vec3(0.5, 0, 0.5), glm::vec3(0.5, 0.5, 0.5), glm::vec3(0, 0.5, 0),
-    glm::vec3(0, -0.5, 0), glm::vec3(0.5, -0.5, 0.5), glm::vec3(0, 0, 0),
-    glm::vec3(0.5, -0.5, 0.5), glm::vec3(0.5, 0, 0.5), glm::vec3(0, 0, 0),
-    glm::vec3(0, -1, 0), glm::vec3(0.5, -1, 0.5), glm::vec3(0, -0.5, 0),
-    glm::vec3(0.5, -1, 0.5), glm::vec3(0.5, -0.5, 0.5), glm::vec3(0, -0.5, 0),
-    glm::vec3(0, -1.5, 0), glm::vec3(0.5, -1.5, 0.5), glm::vec3(0, -1, 0),
-    glm::vec3(0.5, -1.5, 0.5), glm::vec3(0.5, -1, 0.5), glm::vec3(0, -1, 0),
-    glm::vec3(0.5, 0, 0.5), glm::vec3(1, 0, 1), glm::vec3(0.5, 0.5, 0.5),
-    glm::vec3(1, 0, 1), glm::vec3(1, 0.5, 1), glm::vec3(0.5, 0.5, 0.5),
-    glm::vec3(0.5, -0.5, 0.5), glm::vec3(1, -0.5, 1), glm::vec3(0.5, 0, 0.5),
-    glm::vec3(1, -0.5, 1), glm::vec3(1, 0, 1), glm::vec3(0.5, 0, 0.5),
-    glm::vec3(0.5, -1, 0.5), glm::vec3(1, -1, 1), glm::vec3(0.5, -0.5, 0.5),
-    glm::vec3(1, -1, 1), glm::vec3(1, -0.5, 1), glm::vec3(0.5, -0.5, 0.5),
-    glm::vec3(0.5, -1.5, 0.5), glm::vec3(1, -1.5, 1), glm::vec3(0.5, -1, 0.5),
-    glm::vec3(1, -1.5, 1), glm::vec3(1, -1, 1), glm::vec3(0.5, -1, 0.5),
-    glm::vec3(1, 0, 1), glm::vec3(1.5, 0, 1.5), glm::vec3(1, 0.5, 1),
-    glm::vec3(1.5, 0, 1.5), glm::vec3(1.5, 0.5, 1.5), glm::vec3(1, 0.5, 1),
-    glm::vec3(1, -0.5, 1), glm::vec3(1.5, -0.5, 1.5), glm::vec3(1, 0, 1),
-    glm::vec3(1.5, -0.5, 1.5), glm::vec3(1.5, 0, 1.5), glm::vec3(1, 0, 1),
-    glm::vec3(1, -1, 1), glm::vec3(1.5, -1, 1.5), glm::vec3(1, -0.5, 1),
-    glm::vec3(1.5, -1, 1.5), glm::vec3(1.5, -0.5, 1.5), glm::vec3(1, -0.5, 1),
-    glm::vec3(1, -1.5, 1), glm::vec3(1.5, -1.5, 1.5), glm::vec3(1, -1, 1),
-    glm::vec3(1.5, -1.5, 1.5), glm::vec3(1.5, -1, 1.5), glm::vec3(1, -1, 1),
-    glm::vec3(1.5, 0, 1.5), glm::vec3(2, 0, 2), glm::vec3(1.5, 0.5, 1.5),
-    glm::vec3(2, 0, 2), glm::vec3(2, 0.5, 2), glm::vec3(1.5, 0.5, 1.5),
-    glm::vec3(1.5, -0.5, 1.5), glm::vec3(2, -0.5, 2), glm::vec3(1.5, 0, 1.5),
-    glm::vec3(2, -0.5, 2), glm::vec3(2, 0, 2), glm::vec3(1.5, 0, 1.5),
-    glm::vec3(1.5, -1, 1.5), glm::vec3(2, -1, 2), glm::vec3(1.5, -0.5, 1.5),
-    glm::vec3(2, -1, 2), glm::vec3(2, -0.5, 2), glm::vec3(1.5, -0.5, 1.5),
-    glm::vec3(1.5, -1.5, 1.5), glm::vec3(2, -1.5, 2), glm::vec3(1.5, -1, 1.5),
-    glm::vec3(2, -1.5, 2), glm::vec3(2, -1, 2), glm::vec3(1.5, -1, 1.5),
-    glm::vec3(2, 0, 2), glm::vec3(2.5, 0, 2.5), glm::vec3(2, 0.5, 2),
-    glm::vec3(2.5, 0, 2.5), glm::vec3(2.5, 0.5, 2.5), glm::vec3(2, 0.5, 2),
-    glm::vec3(2, -0.5, 2), glm::vec3(2.5, -0.5, 2.5), glm::vec3(2, 0, 2),
-    glm::vec3(2.5, -0.5, 2.5), glm::vec3(2.5, 0, 2.5), glm::vec3(2, 0, 2),
-    glm::vec3(2, -1, 2), glm::vec3(2.5, -1, 2.5), glm::vec3(2, -0.5, 2),
-    glm::vec3(2.5, -1, 2.5), glm::vec3(2.5, -0.5, 2.5), glm::vec3(2, -0.5, 2),
-    glm::vec3(2, -1.5, 2), glm::vec3(2.5, -1.5, 2.5), glm::vec3(2, -1, 2),
-    glm::vec3(2.5, -1.5, 2.5), glm::vec3(2.5, -1, 2.5), glm::vec3(2, -1, 2),
-    glm::vec3(2.5, 0, 2.5), glm::vec3(3, 0, 3), glm::vec3(2.5, 0.5, 2.5),
-    glm::vec3(3, 0, 3), glm::vec3(3, 0.5, 3), glm::vec3(2.5, 0.5, 2.5),
-    glm::vec3(2.5, -0.5, 2.5), glm::vec3(3, -0.5, 3), glm::vec3(2.5, 0, 2.5),
-    glm::vec3(3, -0.5, 3), glm::vec3(3, 0, 3), glm::vec3(2.5, 0, 2.5),
-    glm::vec3(2.5, -1, 2.5), glm::vec3(3, -1, 3), glm::vec3(2.5, -0.5, 2.5),
-    glm::vec3(3, -1, 3), glm::vec3(3, -0.5, 3), glm::vec3(2.5, -0.5, 2.5),
-    glm::vec3(2.5, -1.5, 2.5), glm::vec3(3, -1.5, 3), glm::vec3(2.5, -1, 2.5),
-    glm::vec3(3, -1.5, 3), glm::vec3(3, -1, 3), glm::vec3(2.5, -1, 2.5)
-
-            glm::vec3(0, 0, 0), glm::vec3(0.5, 0, 0.5), glm::vec3(0, 0.5, 0),
-            glm::vec3(0.5, 0, 0.5), glm::vec3(0.5, 0.5, 0.5), glm::vec3(0, 0.5, 0),
-            glm::vec3(0, -0.5, 0), glm::vec3(0.5, -0.5, 0.5), glm::vec3(0, 0, 0),
-            glm::vec3(0.5, -0.5, 0.5), glm::vec3(0.5, 0, 0.5), glm::vec3(0, 0, 0),
-            glm::vec3(0, -1, 0), glm::vec3(0.5, -1, 0.5), glm::vec3(0, -0.5, 0),
-            glm::vec3(0.5, -1, 0.5), glm::vec3(0.5, -0.5, 0.5), glm::vec3(0, -0.5, 0),
-            glm::vec3(0.5, 0, 0.5), glm::vec3(1, 0, 1), glm::vec3(0.5, 0.5, 0.5),
-            glm::vec3(1, 0, 1), glm::vec3(1, 0.5, 1), glm::vec3(0.5, 0.5, 0.5),
-            glm::vec3(0.5, -0.5, 0.5), glm::vec3(1, -0.5, 1), glm::vec3(0.5, 0, 0.5),
-            glm::vec3(1, -0.5, 1), glm::vec3(1, 0, 1), glm::vec3(0.5, 0, 0.5),
-            glm::vec3(0.5, -1, 0.5), glm::vec3(1, -1, 1), glm::vec3(0.5, -0.5, 0.5),
-            glm::vec3(1, -1, 1), glm::vec3(1, -0.5, 1), glm::vec3(0.5, -0.5, 0.5),
-            glm::vec3(1, 0, 1), glm::vec3(1.5, 0, 1.5), glm::vec3(1, 0.5, 1),
-            glm::vec3(1.5, 0, 1.5), glm::vec3(1.5, 0.5, 1.5), glm::vec3(1, 0.5, 1),
-            glm::vec3(1, -0.5, 1), glm::vec3(1.5, -0.5, 1.5), glm::vec3(1, 0, 1),
-            glm::vec3(1.5, -0.5, 1.5), glm::vec3(1.5, 0, 1.5), glm::vec3(1, 0, 1),
-            glm::vec3(1, -1, 1), glm::vec3(1.5, -1, 1.5), glm::vec3(1, -0.5, 1),
-            glm::vec3(1.5, -1, 1.5), glm::vec3(1.5, -0.5, 1.5), glm::vec3(1, -0.5, 1)
-    };
-    std::vector<glm::vec3> a ((0.0,0.0,0.0), (0.0,0.0,0.0));
-    m_PointsPtr->m_ppos= std::vector<glm::vec3> (point, point + sizeof(point)/sizeof(glm::vec3));
-    */
+        auto pA = m_ConPtrs[p]->m_pA->m_ppos;
+        auto pB = m_ConPtrs[p]->m_pB->m_ppos;
+        std::cout<<"PA ("<<pA.x<<" "<<pA.y<<" "<<pA.z<<") ";
+        std::cout<<"PB ("<<pB.x<<" "<<pB.y<<" "<<pB.z<<") \n";
+    }
 }
 
 void PBDobj::runSolver(float dt)

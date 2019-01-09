@@ -3,9 +3,11 @@
 #include <clothsimlib.h>
 #include <clothobj.h>
 #include <distconstraint.h>
+#include <test.h>
 
 #include <clothsimlib_global.h>
 #include <gtest/gtest.h>
+
 
 int main(int argc, char **argv)
 {
@@ -47,13 +49,34 @@ TEST(PBD , makeTriangle)
     EXPECT_EQ(PBD::makeTriangle(glm::vec3(1,1,0), 0.5).c, triangle.c);
 }
 
-TEST(distConstraint, ctr)
-{
-    PBD::ClothObj c;
-    c.makeMesh(glm::vec3(0,0,0),3,3,0.5);
-    PBD::distConstraint dc(&c, 0 ,1);
-    EXPECT_EQ(dc.rLength, 0.5);
+//TEST(distConstraint, ctr)
+//{
+//    PBD::ClothObj c;
+//    c.makeMesh(glm::vec3(0,0,0),3,3,0.5);
+//    PBD::distConstraint dc(&c, 0 ,1);
+//    EXPECT_EQ(dc.rLength, 0.5);
 
+//}
+
+TEST(bool, aproximateVec3)
+{
+    EXPECT_TRUE(aproximateVec3(glm::vec3(0,0,0), glm::vec3(0.04,-0.02,0), 0.05));
+}
+
+TEST(PBDobj, initialize)
+{
+    PBDobj cloth;
+    cloth.initialize(glm::vec3(0,0,0), 3, 3, 0.5);
+    EXPECT_EQ(cloth.m_PointsPtr.size(), 9 );
+    EXPECT_EQ(cloth.m_ConPtrs.size(), 16);
+}
+
+TEST(PBDobj, initialize1)
+{
+    PBDobj cloth;
+    cloth.initialize(glm::vec3(0,0,0), 4, 4, 0.1);
+    EXPECT_EQ(cloth.m_PointsPtr.size(), 16 );
+    EXPECT_EQ(cloth.m_ConPtrs.size(), 33);
 }
 
 //TEST(ClothSim, triMirror)

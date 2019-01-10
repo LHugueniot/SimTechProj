@@ -11,17 +11,17 @@ GLWidget::GLWidget(QWidget *parent) :
 
 void GLWidget::initializeGL()
 {
-    glClearColor(0.2,0.2,0.2,1);
+    glClearColor(1,1,1,1);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHT0);
     glEnable(GL_LIGHTING);
     glEnable(GL_COLOR_MATERIAL);
 
-    Sphere * sphere=new Sphere(1, glm::vec3(-1,-1,0));
+    Sphere * sphere=new Sphere(1, glm::vec3(0,0,0));
     Cloth.addObjectToList(sphere);
-    Cloth.initialize(glm::vec3(-2,2,0), 10, 10, 0.2, 0.99);
+    Cloth.initialize(glm::vec3(-2,2,0), 3, 2, 0.5, 1);
     Cloth.changePointMass(0,0);
-    Cloth.changePointMass(10,0);
+    Cloth.changePointMass(2,0);
 }
 
 void GLWidget::paintGL()

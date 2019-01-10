@@ -58,7 +58,7 @@ public:
     ~Point();
     void update();
     float m_pmass;         //vector storing point masses
-    float m_invMass=1/m_pmass;
+    float m_invMass;
     glm::vec3 m_ppos;      //vector storing point positions
     glm::vec3 m_pvel;      //vector storing point velocities
     glm::vec3 tmp_pos;

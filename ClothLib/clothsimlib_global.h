@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/geometric.hpp>
 #include <vector>
 #include <memory>
 #if defined(CLOTHSIMLIB_LIBRARY)

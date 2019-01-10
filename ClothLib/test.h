@@ -16,6 +16,40 @@ Tri triMirror(Tri _patch,float _patchsize );
 
 bool aproximateVec3(glm::vec3 a, glm::vec3 b, float dif);
 
+class CollisionObj
+{
+public:
+    CollisionObj(){}
+    ~CollisionObj(){}
+    virtual void CreateShape();
+    virtual bool CheckCollision(glm::vec3);
+    std::vector<glm::vec3> vertices;
+    float _radius;
+};
+
+class Sphere : public CollisionObj
+{
+public:
+    Sphere(float _radius);
+    ~Sphere();
+    float m_radius;
+    virtual void CreateShape();
+    virtual bool CheckCollision(glm::vec3);
+};
+
+class Plain : public CollisionObj
+{
+public:
+    Plain(int _width, int _height, float _patchSize, glm::vec3 _pos);
+    ~Plain();
+    virtual void CreateShape();
+    virtual bool CheckCollision(glm::vec3);
+    int m_width;
+    int m_height;
+    float m_patchSize;
+    glm::vec3 m_pos;
+};
+
 //---------------------------------Point stuff-----------------------------
 
 class Point
@@ -26,8 +60,10 @@ public:
     void update();
 
     float m_pmass;         //vector storing point masses
+    float m_invMass=1/m_pmass;
     glm::vec3 m_ppos;      //vector storing point positions
     glm::vec3 m_pvel;      //vector storing point velocities
+    glm::vec3 tmp_pos;
 
 
 private:
@@ -41,7 +77,7 @@ public:
     DistanceConstraint(Point* _pA, Point* _pB);
     ~DistanceConstraint();
 
-    virtual void update();
+    void update();
     Point* m_pA;
     Point* m_pB;
     float m_restLength;
@@ -69,13 +105,21 @@ public:
     ~PBDobj();
 
     void addConstraint(DistanceConstraint *m_Constraint);
-    void initialize(glm::vec3 _pos,int _width, int _height, float _patchsize);
+    void addObjectToList(CollisionObj * _newColObj);
+    void initialize(glm::vec3 _pos, int _width, int _height, float _patchsize, float _damping);
     void runSolver(float dt);
+
+    glm::vec3 m_pos;
     int m_width;
     int m_height;
     float m_patchsize;
+    float m_damp;
+    glm::vec3 m_grav=glm::vec3(0,-9.8,0);
+
     std::vector<Point*> m_PointsPtr;
     std::vector<DistanceConstraint *> m_ConPtrs;
+    std::vector<CollisionObj*> OtherObjs;
+
 };
 
 class PBDtoGLobj
@@ -91,8 +135,10 @@ public:
     PBDtoGLobj(PBDobj* _PBDobj){m_PBDObj=_PBDobj;}
     ~PBDtoGLobj();
 
+    void update();
     PBDobj* m_PBDObj;
     std::vector<triPointer> GLpoints;
 };
+
 
 #endif // TEST_H

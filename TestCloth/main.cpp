@@ -66,7 +66,7 @@ TEST(bool, aproximateVec3)
 TEST(PBDobj, initialize)
 {
     PBDobj cloth;
-    cloth.initialize(glm::vec3(0,0,0), 3, 3, 0.5);
+    cloth.initialize(glm::vec3(0,0,0), 3, 3, 0.5, 0.99);
     EXPECT_EQ(cloth.m_PointsPtr.size(), 9 );
     EXPECT_EQ(cloth.m_ConPtrs.size(), 16);
 }
@@ -74,7 +74,7 @@ TEST(PBDobj, initialize)
 TEST(PBDobj, initialize1)
 {
     PBDobj cloth;
-    cloth.initialize(glm::vec3(0,0,0), 4, 4, 0.1);
+    cloth.initialize(glm::vec3(0,0,0), 4, 4, 0.1, 0.99);
     EXPECT_EQ(cloth.m_PointsPtr.size(), 16 );
     EXPECT_EQ(cloth.m_ConPtrs.size(), 33);
 }

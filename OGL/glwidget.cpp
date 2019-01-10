@@ -17,12 +17,16 @@ void GLWidget::initializeGL()
     glEnable(GL_LIGHTING);
     glEnable(GL_COLOR_MATERIAL);
 
+    Sphere * sphere=new Sphere(1, glm::vec3(-1,-1,0));
+    Cloth.addObjectToList(sphere);
     Cloth.initialize(glm::vec3(-2,2,0), 10, 10, 0.2, 0.99);
+    Cloth.changePointMass(0,0);
+    Cloth.changePointMass(10,0);
 }
 
 void GLWidget::paintGL()
 {
-    Cloth.runSolver(5000);
+    Cloth.runSolver(100);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //    glBegin(GL_TRIANGLES);
@@ -32,9 +36,16 @@ void GLWidget::paintGL()
     //    glColor3f(1, 1, 0);
     //    glVertex3f(0,1,0);
 
-    //    glColor3f(1, 1, 0);
+    glColor3f(1, 1, 0);
     //    glVertex3f(1,1,0);
     //    glEnd();
+
+//    glutSolidTeapot(0.8);
+    glPushMatrix();
+        auto p=Cloth.OtherObjs[0]->m_pos;
+        glTranslated(p.x,p.y,p.z);
+        glutSolidSphere(Cloth.OtherObjs[0]->m_radius,20,20);
+    glPopMatrix();
 
     glBegin(GL_LINES);
     for(uint i=0; i<Cloth.m_ConPtrs.size(); i++)
@@ -56,7 +67,6 @@ void GLWidget::paintGL()
 
     //important functions
     //glRotatef(0.5,1,1,1);
-    //glutSolidTeapot(0.8);
     //glTranslatef(0 , 0.01, 0);
 
 }

@@ -21,20 +21,20 @@ class CollisionObj
 public:
     CollisionObj(){}
     ~CollisionObj(){}
-    virtual void CreateShape();
-    virtual bool CheckCollision(glm::vec3);
+    virtual void CreateShape(){}
+    virtual bool CheckCollision(uint _index,glm::vec3 _ray){}
     std::vector<glm::vec3> vertices;
-    float _radius;
+    double m_radius;
+    glm::vec3 m_pos;
 };
 
 class Sphere : public CollisionObj
 {
 public:
-    Sphere(float _radius);
+    Sphere(double _radius, glm::vec3 _pos);
     ~Sphere();
-    float m_radius;
     virtual void CreateShape();
-    virtual bool CheckCollision(glm::vec3);
+    virtual bool CheckCollision(uint _index,glm::vec3 _ray);
 };
 
 class Plain : public CollisionObj
@@ -43,11 +43,10 @@ public:
     Plain(int _width, int _height, float _patchSize, glm::vec3 _pos);
     ~Plain();
     virtual void CreateShape();
-    virtual bool CheckCollision(glm::vec3);
+    virtual bool CheckCollision(uint _index,glm::vec3 _ray);
     int m_width;
     int m_height;
     float m_patchSize;
-    glm::vec3 m_pos;
 };
 
 //---------------------------------Point stuff-----------------------------
@@ -58,7 +57,6 @@ public:
     Point(glm::vec3 _pos,glm::vec3 _pvel , float _pmass);
     ~Point();
     void update();
-
     float m_pmass;         //vector storing point masses
     float m_invMass=1/m_pmass;
     glm::vec3 m_ppos;      //vector storing point positions
@@ -107,6 +105,7 @@ public:
     void addConstraint(DistanceConstraint *m_Constraint);
     void addObjectToList(CollisionObj * _newColObj);
     void initialize(glm::vec3 _pos, int _width, int _height, float _patchsize, float _damping);
+    void changePointMass(uint _index, float _newMass){m_PointsPtr[_index]->m_invMass=_newMass;}
     void runSolver(float dt);
 
     glm::vec3 m_pos;

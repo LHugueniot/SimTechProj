@@ -79,6 +79,22 @@ TEST(PBDobj, initialize1)
     EXPECT_EQ(cloth.m_ConPtrs.size(), 33);
 }
 
+//TEST()
+//{
+
+//}
+
+//TEST()
+//{
+
+//}
+
+//TEST()
+//{
+
+//}
+
+
 //TEST(ClothSim, triMirror)
 //{
 //    PBD::ClothSim c;

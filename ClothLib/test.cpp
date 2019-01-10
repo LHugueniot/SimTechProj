@@ -65,12 +65,23 @@ DistanceConstraint::DistanceConstraint(Point *_pA, Point *_pB)
 {
     m_pA=_pA;
     m_pB=_pB;
-    m_restLength=(m_pA->m_ppos - m_pA->m_ppos).length();
+    m_restLength=(m_pA->m_ppos - m_pB->m_ppos).length();
 }
 
 void DistanceConstraint::update()
 {
+    glm::vec3 dir = m_pA->m_ppos - m_pB->m_ppos;
+    float const len = dir.length();
+    float const inv_mass=m_pA->m_invMass + m_pA->m_invMass;
+    float const f = ((m_restLength - len ) / inv_mass);
 
+    dir*= (f/len);
+    if(m_pA->m_invMass!=0) {
+        m_pA->tmp_pos -= (dir * m_pA->m_invMass);
+    }
+    if(m_pB->m_invMass!=0) {
+        m_pB->tmp_pos += (dir * m_pB->m_invMass);
+    }
 }
 
 BendingConstraint::BendingConstraint(Point *_pA, Point *_pB, Point *_pC)
@@ -103,6 +114,7 @@ void PBDobj::addConstraint(DistanceConstraint* m_Constraint)
 void PBDobj::addObjectToList(CollisionObj * _newColObj)
 {
     OtherObjs.push_back(_newColObj);
+    std::cout<<_newColObj;
 }
 
 void PBDobj::initialize(glm::vec3 _pos, int _width, int _height, float _patchsize, float _damping)
@@ -155,42 +167,46 @@ void PBDobj::initialize(glm::vec3 _pos, int _width, int _height, float _patchsiz
     {
         auto pA = m_ConPtrs[p]->m_pA->m_ppos;
         auto pB = m_ConPtrs[p]->m_pB->m_ppos;
-        std::cout<<"PA ("<<pA.x<<" "<<pA.y<<" "<<pA.z<<") ";
-        std::cout<<"PB ("<<pB.x<<" "<<pB.y<<" "<<pB.z<<") \n";
+        //std::cout<<"PA ("<<pA.x<<" "<<pA.y<<" "<<pA.z<<") ";
+        //std::cout<<"PB ("<<pB.x<<" "<<pB.y<<" "<<pB.z<<") \n";
     }
 }
+
 
 void PBDobj::runSolver(float dt)
 {
     //Predict Location
+
     float inv_dt=1/dt;
     for (uint i=0; i<m_PointsPtr.size(); i++)
     {
         Point& p = *(m_PointsPtr[i]);
-        p.m_pvel+=m_grav*inv_dt;
+        p.m_pvel+=m_grav*m_damp*inv_dt;
         p.tmp_pos=p.m_ppos+p.m_pvel*inv_dt;
 
-        for(uint j=0; j<OtherObjs.size(); j++)
+        if(OtherObjs.size()>0)
         {
-            CollisionObj& o= *(OtherObjs[j]);
-            auto a=glm::normalize(p.tmp_pos);
-            a*=0.05;
-            while (!aproximateVec3(p.tmp_pos,a,0.1))
+            for(uint j=0; j<OtherObjs.size(); j++)
             {
-                if(aproximateVec3(a,p.tmp_pos,o._radius));
-                {
-                    p.tmp_pos=p.m_ppos;
 
+                CollisionObj& o = *(OtherObjs[j]);
+                //std::cout<<o.vertices.size();
+                for(uint k=0;k<o.vertices.size(); k++)
+                {
+                    if(o.CheckCollision(k,p.tmp_pos)==true)
+                    {
+                        //                    p.tmp_pos=p.m_ppos;
+                        //a+=0.05;
+                        p.tmp_pos=p.m_ppos;
+                    }
                 }
-                a=a+a;
             }
         }
-
     }
 
     for (uint i=0; i<m_ConPtrs.size(); i++)
     {
-
+        m_ConPtrs[i]->update();
     }
     //update constraints
 
@@ -198,7 +214,7 @@ void PBDobj::runSolver(float dt)
     for (uint i=0; i<m_PointsPtr.size(); i++)
     {
         Point& p = *(m_PointsPtr[i]);
-        p.m_ppos+=p.m_pvel;
+        p.m_ppos=p.tmp_pos;
     }
 }
 
@@ -206,19 +222,28 @@ void PBDobj::runSolver(float dt)
 
 //------sphere-------
 
-Sphere::Sphere(float _radius)
+Sphere::Sphere(double _radius, glm::vec3 _pos)
 {
-
+    m_pos=_pos;
+    m_radius=_radius;
+    vertices.clear();
+    vertices.push_back(m_pos);
 }
 
 void Sphere::CreateShape()
 {
-
 }
 
-bool Sphere::CheckCollision(glm::vec3)
+bool Sphere::CheckCollision(uint _index, glm::vec3 _ray)
 {
-
+    if(m_radius>glm::distance(_ray,m_pos))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 //-------plain------
 
@@ -241,7 +266,15 @@ void Plain::CreateShape()
     }
 }
 
-bool Plain::CheckCollision(glm::vec3)
+bool Plain::CheckCollision(uint _index,glm::vec3 _ray)
 {
+        if(aproximateVec3(vertices[_index],_ray, m_radius)==true)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
 
 }

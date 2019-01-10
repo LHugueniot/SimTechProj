@@ -76,23 +76,17 @@ void DistanceConstraint::update()
 {
     glm::vec3 dir = m_pA->m_ppos - m_pB->m_ppos;
     float len = glm::fastLength(dir);
-    std::cout<<"len"<<len;
-    float inv_mass=m_pA->m_invMass + m_pA->m_invMass;
-    float diff = ((m_restLength - len) / (inv_mass*len));
+    std::cout<<"len"<<len<<"\n";
+    float inv_mass=m_pA->m_invMass + m_pB->m_invMass;
+    float diff= (m_restLength - len ) / (len * inv_mass);
+    /*
+    float diff = ((glm::abs(m_restLength - len) ) / (inv_mass*len));*/
 
     dir*= diff;
-    //dir*= (f/len);
-    if(m_pA->m_invMass!=0) {
 
-        m_pA->tmp_pos +=dir;// (dir * m_pA->m_invMass);
-        //std::cout<<"m_pA"<<m_pA->tmp_pos.x<<" "<<m_pA->tmp_pos.y<<" "<<m_pA->tmp_pos.z<<"\n";
-        //std::cout<<m_pA->m_ppos.x<<" "<<m_pA->m_ppos.y<<" "<<m_pA->m_ppos.z<<"\n";
-    }
-    if(m_pB->m_invMass!=0) {
-        m_pB->tmp_pos -=dir;// (dir * m_pB->m_invMass);
-        //std::cout<<"m_pB"<<m_pB->tmp_pos.x<<" "<<m_pB->tmp_pos.y<<" "<<m_pB->tmp_pos.z<<"\n";
-        //std::cout<<m_pB->m_ppos.x<<" "<<m_pB->m_ppos.y<<" "<<m_pB->m_ppos.z<<"\n";
-    }
+        m_pB->tmp_pos-= (dir * m_pB->m_invMass);
+        m_pA->tmp_pos+= (dir * m_pA->m_invMass);
+    std::cout<<diff<<"\n";
 }
 
 BendingConstraint::BendingConstraint(Point *_pA, Point *_pB, Point *_pC)
@@ -132,7 +126,6 @@ void PBDobj::addConstraint(DistanceConstraint* m_Constraint)
 void PBDobj::addObjectToList(CollisionObj * _newColObj)
 {
     OtherObjs.push_back(_newColObj);
-    std::cout<<_newColObj;
 }
 
 void PBDobj::initialize(glm::vec3 _pos, int _width, int _height, float _patchsize, float _damping)
@@ -172,8 +165,8 @@ void PBDobj::initialize(glm::vec3 _pos, int _width, int _height, float _patchsiz
             auto a2 = a0+ glm::vec3(0, m_patchsize, 0);
             auto a3 = a0+ glm::vec3(m_patchsize, m_patchsize, 0);
             if(aproximateVec3(b0,a1,0.05)==true ||
-                    aproximateVec3(b0,a2,0.05) ||
-                    aproximateVec3(b0,a3,0.05))
+                    aproximateVec3(b0,a2,0.05)==true ||
+                    aproximateVec3(b0,a3,0.05)==true)
             {
                 DistanceConstraint* _Con= new DistanceConstraint(m_PointsPtr[i], m_PointsPtr[j]);
                 addConstraint(_Con);
@@ -196,48 +189,54 @@ void PBDobj::runSolver(float dt)
     //Predict Location
 
     float inv_dt=1/dt;
+
+
+    //colision prediction
     for (uint i=0; i<m_PointsPtr.size(); i++)
     {
         Point& p = *(m_PointsPtr[i]);
-        p.m_pvel+=m_grav*m_damp*inv_dt*p.m_invMass;
-        p.tmp_pos=p.m_ppos+p.m_pvel*inv_dt;
+        p.m_pvel+=m_grav*m_damp*p.m_invMass*dt;
+        p.tmp_pos=p.m_ppos+p.m_pvel*dt;
 
-        if(OtherObjs.size()>0)
-        {
-            for(uint j=0; j<OtherObjs.size(); j++)
-            {
-
-                CollisionObj& o = *(OtherObjs[j]);
-                //std::cout<<o.vertices.size();
-                for(uint k=0;k<o.vertices.size(); k++)
+                if(OtherObjs.size()>0)
                 {
-                    if(o.CheckCollision(k,p.tmp_pos)==true)
+                    for(uint j=0; j<OtherObjs.size(); j++)
                     {
-                        //                    p.tmp_pos=p.m_ppos;
-                        //a+=0.05;
-                        p.tmp_pos=p.m_ppos;
+
+                        CollisionObj& o = *(OtherObjs[j]);
+                        for(uint k=0;k<o.vertices.size(); k++)
+                        {
+                            if(o.CheckCollision(k,p.tmp_pos)==true)
+                            {
+                                //                    p.tmp_pos=p.m_ppos;
+                                //a+=0.05;
+                                p.tmp_pos=p.m_ppos;
+                            }
+                        }
                     }
                 }
-            }
-        }
     }
 
     //update constraints
-    for (uint i=0; i<m_ConPtrs.size(); i++)
+
+    for(uint j=0; j<1; j++)
     {
-//        for(uint j=0; j<2; j++)
-//        {
-//            m_ConPtrs[i]->update();
-//        }
-        m_ConPtrs[i]->update();
+        for (uint i=0; i<m_ConPtrs.size(); i++)
+        {
+            m_ConPtrs[i]->update();
+        }
+        std::cout<<"\n";
     }
+
 
     //update position
     for (uint i=0; i<m_PointsPtr.size(); i++)
     {
         Point& p = *(m_PointsPtr[i]);
+        p.m_pvel = (p.tmp_pos - p.m_ppos)*inv_dt;// * inv_dt;
         p.m_ppos=p.tmp_pos;
-        //std::cout<<p.tmp_pos.x<<" "<<p.tmp_pos.y<<" "<<p.tmp_pos.z<<"\n";
+        //p.tmp_pos=glm::vec3(0,0,0);
+        std::cout<<p.tmp_pos.x<<" "<<p.tmp_pos.y<<" "<<p.tmp_pos.z<<"\n";
     }
     //std::cout<<p.m_ppos.x<<" "<<p.m_ppos.y<<" "<<p.m_ppos.z<<"\n";
 

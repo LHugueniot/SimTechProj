@@ -69,6 +69,16 @@ TEST(PBDobj, initialize)
     cloth.initialize(glm::vec3(0,0,0), 3, 3, 0.5, 0.99);
     EXPECT_EQ(cloth.m_PointsPtr.size(), 9 );
     EXPECT_EQ(cloth.m_ConPtrs.size(), 16);
+    for(uint i=0;i<cloth.m_ConPtrs.size(); i++)
+    {
+        auto pA=cloth.m_ConPtrs[i]->m_pA->m_ppos;
+        auto pB=cloth.m_ConPtrs[i]->m_pB->m_ppos;
+        if( pA==pB)
+        {
+            std::cout<<"error"<<i;
+        }
+        //std::cout<<pA.x<<" "<<pA.y<<" "<<pA.z<<"\n";
+    }
 }
 
 TEST(PBDobj, initialize1)

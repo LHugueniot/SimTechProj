@@ -19,14 +19,14 @@ void GLWidget::initializeGL()
 
     Sphere * sphere=new Sphere(0.3, glm::vec3(-1,-1,0));
     Cloth.addObjectToList(sphere);
-    Cloth.initialize(glm::vec3(-2,2,0), 10, 10, 0.2, 1);
-    Cloth.changePointMass(0,0);
-    Cloth.changePointMass(Cloth.m_width*(Cloth.m_height-1),0);
+    Cloth.initialize(glm::vec3(-2,2,0), 6, 6, 0.2, 1);
+    //Cloth.changePointMass(0,0);
+    //Cloth.changePointMass(Cloth.m_width*(Cloth.m_height-1),0);
 }
 
 void GLWidget::paintGL()
 {
-    Cloth.runSolver(100);
+    Cloth.runSolver(0.01);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //    glBegin(GL_TRIANGLES);

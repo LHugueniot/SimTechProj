@@ -17,11 +17,11 @@ void GLWidget::initializeGL()
     glEnable(GL_LIGHTING);
     glEnable(GL_COLOR_MATERIAL);
 
-    Sphere * sphere=new Sphere(1, glm::vec3(0,0,0));
+    Sphere * sphere=new Sphere(0.3, glm::vec3(-1,-1,0));
     Cloth.addObjectToList(sphere);
-    Cloth.initialize(glm::vec3(-2,2,0), 3, 2, 0.5, 1);
+    Cloth.initialize(glm::vec3(-2,2,0), 10, 10, 0.2, 1);
     Cloth.changePointMass(0,0);
-    Cloth.changePointMass(2,0);
+    Cloth.changePointMass(Cloth.m_width*(Cloth.m_height-1),0);
 }
 
 void GLWidget::paintGL()

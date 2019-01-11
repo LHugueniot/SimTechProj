@@ -2,6 +2,9 @@
 #define TEST_H
 #include <clothsimlib_global.h>
 
+namespace PBD {
+
+
 //--------------------------------Triangle Stuff---------------------------
 
 struct Tri
@@ -16,13 +19,34 @@ Tri triMirror(Tri _patch,float _patchsize );
 
 bool aproximateVec3(glm::vec3 a, glm::vec3 b, float dif);
 
+
+
+//---------------------------------Point Class-----------------------------
+
+class Point
+{
+public:
+    Point(glm::vec3 _pos,glm::vec3 _pvel , float _pmass);
+    ~Point();
+    void update();
+    float m_pmass;          //float storing point masse
+    float m_invMass;        //float storing inverse point mass
+    glm::vec3 m_ppos;       //vec3 storing point position
+    glm::vec3 m_pvel;       //vec3 storing point velocitie
+    glm::vec3 tmp_pos;      //vec3 storing predicted point position
+
+};
+
+//-----------------------------------Collision obj classes---------------------
+
 class CollisionObj
 {
 public:
     CollisionObj(){}
     ~CollisionObj(){}
     virtual void CreateShape(){}
-    virtual bool CheckCollision(uint _index,glm::vec3 _ray){}
+    virtual bool CheckCollision(Point& p){}
+    virtual bool CheckCollision1(int k, glm::vec3 _ray){}
     std::vector<glm::vec3> vertices;
     double m_radius;
     glm::vec3 m_pos;
@@ -34,37 +58,20 @@ public:
     Sphere(double _radius, glm::vec3 _pos);
     ~Sphere();
     virtual void CreateShape();
-    virtual bool CheckCollision(uint _index,glm::vec3 _ray);
+    virtual bool CheckCollision(Point& p);
+    virtual bool CheckCollision1(int k, glm::vec3 _ray);
 };
 
 class Plain : public CollisionObj
 {
 public:
-    Plain(int _width, int _height, float _patchSize, glm::vec3 _pos);
+    Plain(int _width, int _height, glm::vec3 _pos);
     ~Plain();
     virtual void CreateShape();
-    virtual bool CheckCollision(uint _index,glm::vec3 _ray);
+    virtual bool CheckCollision(Point& p);
     int m_width;
     int m_height;
-    float m_patchSize;
-};
-
-//---------------------------------Point stuff-----------------------------
-
-class Point
-{
-public:
-    Point(glm::vec3 _pos,glm::vec3 _pvel , float _pmass);
-    ~Point();
-    void update();
-    float m_pmass;         //vector storing point masses
-    float m_invMass;
-    glm::vec3 m_ppos;      //vector storing point positions
-    glm::vec3 m_pvel;      //vector storing point velocities
-    glm::vec3 tmp_pos;
-
-
-private:
+    int m_depth;
 };
 
 //---------------------------------Constraint stuff------------------------
@@ -81,6 +88,7 @@ public:
     float m_restLength;
 };
 
+
 class BendingConstraint
 {
 public:
@@ -94,7 +102,7 @@ public:
     float m_restAngle;
 };
 
-//--------------------------------One class to rule them all----------------
+//--------------------------------PBDobj Class--------------------------------------------------
 
 class PBDobj
 {
@@ -138,6 +146,6 @@ public:
     PBDobj* m_PBDObj;
     std::vector<triPointer> GLpoints;
 };
-
+}
 
 #endif // TEST_H

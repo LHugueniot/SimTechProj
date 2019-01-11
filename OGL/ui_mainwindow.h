@@ -40,20 +40,20 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(873, 526);
+        MainWindow->resize(1440, 720);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         centralWidget->setEnabled(true);
         pushbutton = new QPushButton(centralWidget);
         pushbutton->setObjectName(QStringLiteral("pushbutton"));
-        pushbutton->setGeometry(QRect(729, 377, 141, 81));
+        pushbutton->setGeometry(QRect(1280, 380, 141, 81));
         widget = new GLWidget(centralWidget);
         widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(0, 0, 731, 451));
+        widget->setGeometry(QRect(0, 0, 1280, 720));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 873, 25));
+        menuBar->setGeometry(QRect(0, 0, 1440, 25));
         menuClothSim = new QMenu(menuBar);
         menuClothSim->setObjectName(QStringLiteral("menuClothSim"));
         MainWindow->setMenuBar(menuBar);

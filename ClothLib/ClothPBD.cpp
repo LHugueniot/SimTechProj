@@ -1,4 +1,8 @@
-#include "test.h"
+#include "ClothPBD.h"
+
+namespace PBD {
+
+
 
 bool aproximateVec3(glm::vec3 a, glm::vec3 b, float dif)
 {
@@ -76,17 +80,12 @@ void DistanceConstraint::update()
 {
     glm::vec3 dir = m_pA->m_ppos - m_pB->m_ppos;
     float len = glm::fastLength(dir);
-    std::cout<<"len"<<len<<"\n";
     float inv_mass=m_pA->m_invMass + m_pB->m_invMass;
     float diff= (m_restLength - len ) / (len * inv_mass);
-    /*
-    float diff = ((glm::abs(m_restLength - len) ) / (inv_mass*len));*/
-
     dir*= diff;
 
-        m_pB->tmp_pos-= (dir * m_pB->m_invMass);
-        m_pA->tmp_pos+= (dir * m_pA->m_invMass);
-    std::cout<<diff<<"\n";
+    m_pB->tmp_pos-= (dir * m_pB->m_invMass);
+    m_pA->tmp_pos+= (dir * m_pA->m_invMass);
 }
 
 BendingConstraint::BendingConstraint(Point *_pA, Point *_pB, Point *_pC)
@@ -142,15 +141,8 @@ void PBDobj::initialize(glm::vec3 _pos, int _width, int _height, float _patchsiz
     {
         for(uint j=0;j<m_height; j++)
         {
-            //            auto tri1=makeTriangle(m_pos, m_patchsize);
-            //            m_PointsPtr->m_ppos.push_back(tri1.a);
-            //            m_PointsPtr->m_ppos.push_back(tri1.b);
-            //            m_PointsPtr->m_ppos.push_back(tri1.c);
-            //            auto tri2=triMirror(tri1, m_patchsize);
-            //            m_PointsPtr->m_ppos.push_back(tri2.a);
-            //            m_PointsPtr->m_ppos.push_back(tri2.b);
-            //            m_PointsPtr->m_ppos.push_back(tri2.c);
-            Point * newp = new Point(m_pos +glm::vec3( i*m_patchsize,j*-m_patchsize,0),glm::vec3(0,0,0), 1);
+            Point * newp = new Point(m_pos +glm::vec3( i*m_patchsize,0,j*-m_patchsize),
+                                     glm::vec3(0,0,0), 1);
             m_PointsPtr.push_back(newp);
         }
     }
@@ -162,8 +154,8 @@ void PBDobj::initialize(glm::vec3 _pos, int _width, int _height, float _patchsiz
             auto a0 = m_PointsPtr.at(i)->m_ppos;
             auto b0 = m_PointsPtr.at(j)->m_ppos;
             auto a1 = a0+ glm::vec3(m_patchsize, 0, 0);
-            auto a2 = a0+ glm::vec3(0, m_patchsize, 0);
-            auto a3 = a0+ glm::vec3(m_patchsize, m_patchsize, 0);
+            auto a2 = a0+ glm::vec3(0, 0, m_patchsize);
+            auto a3 = a0+ glm::vec3(m_patchsize, 0, m_patchsize);
             if(aproximateVec3(b0,a1,0.05)==true ||
                     aproximateVec3(b0,a2,0.05)==true ||
                     aproximateVec3(b0,a3,0.05)==true)
@@ -198,28 +190,30 @@ void PBDobj::runSolver(float dt)
         p.m_pvel+=m_grav*m_damp*p.m_invMass*dt;
         p.tmp_pos=p.m_ppos+p.m_pvel*dt;
 
-                if(OtherObjs.size()>0)
+        if(OtherObjs.size()>0)
+        {
+            for(uint j=0; j<OtherObjs.size(); j++)
+            {
+                CollisionObj& o = *(OtherObjs[j]);
+                for(uint k=0; k<o.vertices.size(); k++)
                 {
-                    for(uint j=0; j<OtherObjs.size(); j++)
+                    if(o.CheckCollision1(k,p.tmp_pos)==true)
                     {
-
-                        CollisionObj& o = *(OtherObjs[j]);
-                        for(uint k=0;k<o.vertices.size(); k++)
-                        {
-                            if(o.CheckCollision(k,p.tmp_pos)==true)
-                            {
-                                //                    p.tmp_pos=p.m_ppos;
-                                //a+=0.05;
-                                p.tmp_pos=p.m_ppos;
-                            }
-                        }
+                        //                    p.tmp_pos=p.m_ppos;
+                        //a+=0.05;
+                        //p.m_ppos-=p.m_pvel;
+                        //p.m_pvel-=p.m_pvel;
                     }
                 }
+                //                o.CheckCollision(p);
+            }
+        }
     }
 
     //update constraints
 
-    for(uint j=0; j<1; j++)
+
+    for (uint i=0; i<1; i++)
     {
         for (uint i=0; i<m_ConPtrs.size(); i++)
         {
@@ -228,17 +222,14 @@ void PBDobj::runSolver(float dt)
         std::cout<<"\n";
     }
 
-
     //update position
     for (uint i=0; i<m_PointsPtr.size(); i++)
     {
         Point& p = *(m_PointsPtr[i]);
         p.m_pvel = (p.tmp_pos - p.m_ppos)*inv_dt;// * inv_dt;
         p.m_ppos=p.tmp_pos;
-        //p.tmp_pos=glm::vec3(0,0,0);
         std::cout<<p.tmp_pos.x<<" "<<p.tmp_pos.y<<" "<<p.tmp_pos.z<<"\n";
     }
-    //std::cout<<p.m_ppos.x<<" "<<p.m_ppos.y<<" "<<p.m_ppos.z<<"\n";
 
 }
 
@@ -258,7 +249,28 @@ void Sphere::CreateShape()
 {
 }
 
-bool Sphere::CheckCollision(uint _index, glm::vec3 _ray)
+bool Sphere::CheckCollision(Point& p)
+{
+    for(uint k=0; k<vertices.size(); k++)
+    {
+        auto sCenter=m_pos;
+        auto m = p.m_ppos - sCenter;
+        float b = glm::dot(m, p.tmp_pos);
+        float c = glm::dot(m,m) - m_radius * m_radius;
+        if(c > 0.0f && b >0.0f) continue;
+        float discr= b*b -c;
+
+        if(discr< 0.0f) continue;
+
+        float t= -b - glm::sqrt(discr);
+
+        if(t<0.0f) t=0.0f;
+        p.tmp_pos= p.m_ppos + t * p.tmp_pos;
+        p.m_pvel=glm::vec3(0,0,0);
+    }
+}
+
+bool Sphere::CheckCollision1(int k, glm::vec3 _ray)
 {
     if(m_radius>glm::distance(_ray,m_pos))
     {
@@ -271,34 +283,23 @@ bool Sphere::CheckCollision(uint _index, glm::vec3 _ray)
 }
 //-------plain------
 
-Plain::Plain(int _width, int _height, float _patchSize, glm::vec3 _pos)
+Plain::Plain(int _width, int _height, glm::vec3 _pos)
 {
     m_width=_width;
     m_height=_height;
-    m_patchSize=_patchSize;
     m_pos=_pos;
 }
 
 void Plain::CreateShape()
 {
-    for(uint i=0 ;i<m_width; i++)
-    {
-        for(uint j=0; j< m_height; j++)
-        {
-            vertices.push_back(glm::vec3(i*m_patchSize,0,j*m_patchSize));
-        }
-    }
+    vertices.push_back(m_pos);
+    vertices.push_back(m_pos+glm::vec3(m_width,0,0));
+    vertices.push_back(m_pos+glm::vec3(0,0,m_height));
+    vertices.push_back(m_pos+glm::vec3(m_width,0,m_height));
 }
 
-bool Plain::CheckCollision(uint _index,glm::vec3 _ray)
+bool Plain::CheckCollision(Point& p)
 {
-    if(aproximateVec3(vertices[_index],_ray, m_radius)==true)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+}
 
 }

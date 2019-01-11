@@ -52,13 +52,11 @@ OBJECTS_DIR   = ./
 
 SOURCES       = main.cpp \
 		mainwindow.cpp \
-		glwidget.cpp \
-		mesh.cpp moc_mainwindow.cpp \
+		glwidget.cpp moc_mainwindow.cpp \
 		moc_glwidget.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		glwidget.o \
-		mesh.o \
 		moc_mainwindow.o \
 		moc_glwidget.o
 DIST          = ../../../../Qt/5.9.1/gcc_64/mkspecs/features/spec_pre.prf \
@@ -241,11 +239,9 @@ DIST          = ../../../../Qt/5.9.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../../Qt/5.9.1/gcc_64/mkspecs/features/yacc.prf \
 		../../../../Qt/5.9.1/gcc_64/mkspecs/features/lex.prf \
 		OGL.pro mainwindow.h \
-		glwidget.h \
-		mesh.h main.cpp \
+		glwidget.h main.cpp \
 		mainwindow.cpp \
-		glwidget.cpp \
-		mesh.cpp
+		glwidget.cpp
 QMAKE_TARGET  = OGL
 DESTDIR       = 
 TARGET        = OGL
@@ -641,8 +637,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../../../Qt/5.9.1/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.h glwidget.h mesh.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp mainwindow.cpp glwidget.cpp mesh.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents mainwindow.h glwidget.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp mainwindow.cpp glwidget.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui $(DISTDIR)/
 
 
@@ -925,7 +921,7 @@ moc_glwidget.cpp: ../../../../Qt/5.9.1/gcc_64/include/QtCore/QObject \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/QTimer \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qtimer.h \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qbasictimer.h \
-		../ClothLib/test.h \
+		../ClothLib/ClothPBD.h \
 		../ClothLib/clothsimlib_global.h \
 		glwidget.h \
 		moc_predefs.h \
@@ -1057,7 +1053,7 @@ ui_mainwindow.h: mainwindow.ui \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/QTimer \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qtimer.h \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qbasictimer.h \
-		../ClothLib/test.h \
+		../ClothLib/ClothPBD.h \
 		../ClothLib/clothsimlib_global.h
 	/home/lhug/Qt/5.9.1/gcc_64/bin/uic mainwindow.ui -o ui_mainwindow.h
 
@@ -1455,12 +1451,9 @@ glwidget.o: glwidget.cpp glwidget.h \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/QTimer \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qtimer.h \
 		../../../../Qt/5.9.1/gcc_64/include/QtCore/qbasictimer.h \
-		../ClothLib/test.h \
+		../ClothLib/ClothPBD.h \
 		../ClothLib/clothsimlib_global.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o glwidget.o glwidget.cpp
-
-mesh.o: mesh.cpp mesh.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mesh.o mesh.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp

@@ -11,7 +11,7 @@
 #include <glm/glm.hpp>
 
 //#include <clothobj.h>
-#include <test.h>
+#include <ClothPBD.h>
 class GLWidget : public QGLWidget
 {
     Q_OBJECT
@@ -20,7 +20,7 @@ public:
     void initializeGL();
     void paintGL();
     void resizeGL(int w, int h);
-    PBDobj Cloth;
+    PBD::PBDobj Cloth;
 private:
     QTimer timer;
 };

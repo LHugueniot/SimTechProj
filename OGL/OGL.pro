@@ -27,13 +27,11 @@ INCLUDEPATH+= /usr/local/bin/ ../ClothLib/
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    glwidget.cpp \
-    mesh.cpp
+    glwidget.cpp
 
 HEADERS += \
         mainwindow.h \
-    glwidget.h \
-    mesh.h
+    glwidget.h
 
 FORMS += \
         mainwindow.ui

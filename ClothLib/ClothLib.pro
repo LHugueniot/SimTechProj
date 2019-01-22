@@ -24,17 +24,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    ClothPBD.cpp
-        #clothsimlib.cpp \
-    #clothobj.cpp \
-    #distconstraint.cpp \
+    #ClothPBD.cpp \
+    point.cpp \
+    collisionobj.cpp \
+    constraints.cpp \
+    lml.cpp \
+    PBDObj.cpp
 
 HEADERS += \
-        #clothsimlib.h \
-        clothsimlib_global.h \  
-    ClothPBD.h
-    #clothobj.h \
-    #distconstraint.h \
+    clothsimlib_global.h \
+    #ClothPBD.h \
+    point.h \
+    collisionobj.h \
+    constraints.h \
+    lml.h \
+    PBDObj.h
 
 unix {
     target.path = /usr/lib

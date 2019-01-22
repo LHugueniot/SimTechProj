@@ -78,14 +78,19 @@ DistanceConstraint::~DistanceConstraint(){}
 
 void DistanceConstraint::update()
 {
-    glm::vec3 dir = m_pA->m_ppos - m_pB->m_ppos;
-    float len = glm::fastLength(dir);
+    glm::vec3 dir = m_pA->tmp_pos - m_pB->tmp_pos;
+    float len = glm::length(dir);
     float inv_mass=m_pA->m_invMass + m_pB->m_invMass;
-    float diff= (m_restLength - len ) / (len * inv_mass);
-    dir*= diff;
 
-    m_pB->tmp_pos-= (dir * m_pB->m_invMass);
-    m_pA->tmp_pos+= (dir * m_pA->m_invMass);
+    std::cout<<len<<"\n";
+
+    m_pA->tmp_pos-=((m_pA->m_invMass/inv_mass)*
+                     (len - m_restLength)*
+                     (dir/len));
+
+    m_pB->tmp_pos+=((m_pB->m_invMass/inv_mass)*
+                    (len -m_restLength)*
+                    (dir/len));
 }
 
 BendingConstraint::BendingConstraint(Point *_pA, Point *_pB, Point *_pC)
@@ -187,8 +192,8 @@ void PBDobj::runSolver(float dt)
     for (uint i=0; i<m_PointsPtr.size(); i++)
     {
         Point& p = *(m_PointsPtr[i]);
-        p.m_pvel+=m_grav*m_damp*p.m_invMass*dt;
-        p.tmp_pos=p.m_ppos+p.m_pvel*dt;
+        p.m_pvel+=m_grav*m_damp*p.m_invMass*inv_dt;
+        p.tmp_pos=p.m_ppos+p.m_pvel*inv_dt;
 
         if(OtherObjs.size()>0)
         {
@@ -199,7 +204,7 @@ void PBDobj::runSolver(float dt)
                 {
                     if(o.CheckCollision1(k,p.tmp_pos)==true)
                     {
-                        //                    p.tmp_pos=p.m_ppos;
+                        //p.tmp_pos=p.m_ppos;
                         //a+=0.05;
                         //p.m_ppos-=p.m_pvel;
                         //p.m_pvel-=p.m_pvel;
@@ -212,23 +217,23 @@ void PBDobj::runSolver(float dt)
 
     //update constraints
 
-
-    for (uint i=0; i<1; i++)
+    for (uint i=0; i<5; i++)
     {
         for (uint i=0; i<m_ConPtrs.size(); i++)
         {
             m_ConPtrs[i]->update();
         }
-        std::cout<<"\n";
     }
+    std::cout<<"\n";
+
 
     //update position
     for (uint i=0; i<m_PointsPtr.size(); i++)
     {
         Point& p = *(m_PointsPtr[i]);
-        p.m_pvel = (p.tmp_pos - p.m_ppos)*inv_dt;// * inv_dt;
+        p.m_pvel = (p.tmp_pos - p.m_ppos)/inv_dt;// * inv_dt;
         p.m_ppos=p.tmp_pos;
-        std::cout<<p.tmp_pos.x<<" "<<p.tmp_pos.y<<" "<<p.tmp_pos.z<<"\n";
+        //std::cout<<p.tmp_pos.x<<" "<<p.tmp_pos.y<<" "<<p.tmp_pos.z<<"\n";
     }
 
 }

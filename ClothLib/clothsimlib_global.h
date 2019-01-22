@@ -2,15 +2,18 @@
 #define CLOTHSIMLIB_GLOBAL_H
 
 #include <QtCore/qglobal.h>
+
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
+
 #include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/fast_square_root.hpp"
 #include <glm/gtx/transform.hpp>
 #undef GLM_ENABLE_EXPERIMENTAL
 #include <glm/geometric.hpp>
+
 #include <vector>
 #include <memory>
 #if defined(CLOTHSIMLIB_LIBRARY)

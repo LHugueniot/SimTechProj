@@ -88,7 +88,6 @@ public:
     float m_restLength;
 };
 
-
 class BendingConstraint
 {
 public:
@@ -121,7 +120,7 @@ public:
     int m_height;
     float m_patchsize;
     float m_damp;
-    glm::vec3 m_grav=glm::vec3(0,-9.8,0);
+    glm::vec3 m_grav=glm::vec3(0,-0.1,0);
 
     std::vector<Point*> m_PointsPtr;
     std::vector<DistanceConstraint *> m_ConPtrs;

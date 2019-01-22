@@ -3,9 +3,7 @@
 //#include <clothsimlib.h>
 //#include <clothobj.h>
 //#include <distconstraint.h>
-#include <ClothPBD.h>
-
-#include <clothsimlib_global.h>
+#include <PBDObj.h>
 #include <gtest/gtest.h>
 
 
@@ -15,9 +13,9 @@ int main(int argc, char **argv)
     return RUN_ALL_TESTS();
 }
 
-TEST(PBD, aproximateVec3)
+TEST(LML, aproximateVec3)
 {
-    EXPECT_TRUE(PBD::aproximateVec3(glm::vec3(0,0,0), glm::vec3(0.04,-0.02,0), 0.05));
+    EXPECT_TRUE(LML::aproximateVec3(glm::vec3(0,0,0), glm::vec3(0.04,-0.02,0), 0.05));
 }
 
 TEST(PBDobj, initialize)

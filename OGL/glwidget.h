@@ -10,8 +10,8 @@
 #include <QTimer>
 #include <glm/glm.hpp>
 
-//#include <clothobj.h>
-#include <ClothPBD.h>
+#include <PBDObj.h>
+
 class GLWidget : public QGLWidget
 {
     Q_OBJECT
@@ -21,6 +21,7 @@ public:
     void paintGL();
     void resizeGL(int w, int h);
     PBD::PBDobj Cloth;
+    int time;
 private:
     QTimer timer;
 };

@@ -17,24 +17,32 @@ void GLWidget::initializeGL()
     glEnable(GL_LIGHTING);
     glEnable(GL_COLOR_MATERIAL);
 
-    PBD::Sphere * sphere=new PBD::Sphere(0.7, glm::vec3(1,0,0));
-    Cloth.addObjectToList(sphere);
-    Cloth.initialize(glm::vec3(-0.5,2,0.5), 20, 20, 0.1, 1);
+    PBD::Sphere * sphere=new PBD::Sphere(0.7, glm::vec3(0,-1,0));
+    //Cloth.addObjectToList(sphere);
+    Cloth.initialize(glm::vec3(-1,2,0.2), 10, 10, 0.5, 1);
 
     Cloth.changePointMass(0,0);
     Cloth.changePointMass(Cloth.m_width*(Cloth.m_height-1),0);
+    //Cloth.changePointMass((Cloth.m_height-1),0);
+    //Cloth.changePointMass(99,0);
+    //Cloth.changePointMass(45,10);
 }
 
 void GLWidget::paintGL()
 {
-    Cloth.runSolver(0.01);
+
+    Cloth.runSolver(5);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glColor3f(1, 0, 0.5);
 
+//    glBindBuffer(GL_ARRAY_BUFFER, buf1);
+//    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+//    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
     glPushMatrix();
-        auto p=Cloth.OtherObjs[0]->m_pos;
-        glTranslated(p.x,p.y,p.z);
+        //auto p=Cloth.OtherObjs[0]->m_pos;
+        //glTranslated(p.x,p.y,p.z);
         //glutSolidSphere(Cloth.OtherObjs[0]->m_radius,20,20);
     glPopMatrix();
 

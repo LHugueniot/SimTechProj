@@ -27,11 +27,13 @@ INCLUDEPATH+= /usr/local/bin/ ../ClothLib/
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    glwidget.cpp
+    glwidget.cpp \
+    trackballcam.cpp
 
 HEADERS += \
         mainwindow.h \
-    glwidget.h
+    glwidget.h \
+    trackballcam.h
 
 FORMS += \
         mainwindow.ui
@@ -44,3 +46,4 @@ else:unix: LIBS += -L$$OUT_PWD/../ClothLib/ -lClothSimLib
 INCLUDEPATH += $$PWD/../ClothLib
 DEPENDPATH += $$PWD/../ClothLib
 
+QMAKE_CXXFLAGS+=-O3

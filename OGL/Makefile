@@ -14,7 +14,7 @@ CC            = gcc
 CXX           = g++
 DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-CXXFLAGS      = -pipe -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
+CXXFLAGS      = -pipe -O3 -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 INCPATH       = -I. -I/usr/local/bin -I../ClothLib -I../ClothLib -I/opt/Qt5.11.1/5.11.1/gcc_64/include -I/opt/Qt5.11.1/5.11.1/gcc_64/include/QtOpenGL -I/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets -I/opt/Qt5.11.1/5.11.1/gcc_64/include/QtGui -I/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore -I. -isystem /usr/include/libdrm -I. -I/opt/Qt5.11.1/5.11.1/gcc_64/mkspecs/linux-g++
 QMAKE         = /opt/Qt5.11.1/5.11.1/gcc_64/bin/qmake
 DEL_FILE      = rm -f
@@ -52,11 +52,13 @@ OBJECTS_DIR   = ./
 
 SOURCES       = main.cpp \
 		mainwindow.cpp \
-		glwidget.cpp moc_mainwindow.cpp \
+		glwidget.cpp \
+		trackballcam.cpp moc_mainwindow.cpp \
 		moc_glwidget.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		glwidget.o \
+		trackballcam.o \
 		moc_mainwindow.o \
 		moc_glwidget.o
 DIST          = /opt/Qt5.11.1/5.11.1/gcc_64/mkspecs/features/spec_pre.prf \
@@ -249,9 +251,11 @@ DIST          = /opt/Qt5.11.1/5.11.1/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt5.11.1/5.11.1/gcc_64/mkspecs/features/yacc.prf \
 		/opt/Qt5.11.1/5.11.1/gcc_64/mkspecs/features/lex.prf \
 		OGL.pro mainwindow.h \
-		glwidget.h main.cpp \
+		glwidget.h \
+		trackballcam.h main.cpp \
 		mainwindow.cpp \
-		glwidget.cpp
+		glwidget.cpp \
+		trackballcam.cpp
 QMAKE_TARGET  = OGL
 DESTDIR       = 
 TARGET        = OGL
@@ -667,8 +671,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /opt/Qt5.11.1/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.h glwidget.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp mainwindow.cpp glwidget.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents mainwindow.h glwidget.h trackballcam.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp mainwindow.cpp glwidget.cpp trackballcam.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui $(DISTDIR)/
 
 
@@ -698,7 +702,7 @@ compiler_moc_predefs_make_all: moc_predefs.h
 compiler_moc_predefs_clean:
 	-$(DEL_FILE) moc_predefs.h
 moc_predefs.h: /opt/Qt5.11.1/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp
-	g++ -pipe -g -std=gnu++11 -Wall -W -dM -E -o moc_predefs.h /opt/Qt5.11.1/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp
+	g++ -pipe -O3 -g -std=gnu++11 -Wall -W -dM -E -o moc_predefs.h /opt/Qt5.11.1/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp
 
 compiler_moc_header_make_all: moc_mainwindow.cpp moc_glwidget.cpp
 compiler_moc_header_clean:
@@ -957,8 +961,12 @@ moc_glwidget.cpp: /opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/QObject \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/QTimer \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/qtimer.h \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/qbasictimer.h \
-		../ClothLib/ClothPBD.h \
+		../ClothLib/PBDObj.h \
 		../ClothLib/clothsimlib_global.h \
+		../ClothLib/point.h \
+		../ClothLib/constraints.h \
+		../ClothLib/collisionobj.h \
+		../ClothLib/lml.h \
 		glwidget.h \
 		moc_predefs.h \
 		/opt/Qt5.11.1/5.11.1/gcc_64/bin/moc
@@ -1094,8 +1102,12 @@ ui_mainwindow.h: mainwindow.ui \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/QTimer \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/qtimer.h \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/qbasictimer.h \
-		../ClothLib/ClothPBD.h \
-		../ClothLib/clothsimlib_global.h
+		../ClothLib/PBDObj.h \
+		../ClothLib/clothsimlib_global.h \
+		../ClothLib/point.h \
+		../ClothLib/constraints.h \
+		../ClothLib/collisionobj.h \
+		../ClothLib/lml.h
 	/opt/Qt5.11.1/5.11.1/gcc_64/bin/uic mainwindow.ui -o ui_mainwindow.h
 
 compiler_yacc_decl_make_all:
@@ -1238,6 +1250,25 @@ main.o: main.cpp mainwindow.h \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtGui/qopenglext.h \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtGui/qopenglversionfunctions.h \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtGui/QImage \
+		eventhandler.h \
+		glwidget.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtOpenGL/QGLWidget \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtOpenGL/qgl.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtGui/qpaintengine.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtGui/qpainter.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtGui/qtextoption.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtGui/qpen.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtOpenGL/qglcolormap.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtOpenGL/qtopenglglobal.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/QTimer \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/qtimer.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/qbasictimer.h \
+		../ClothLib/PBDObj.h \
+		../ClothLib/clothsimlib_global.h \
+		../ClothLib/point.h \
+		../ClothLib/constraints.h \
+		../ClothLib/collisionobj.h \
+		../ClothLib/lml.h \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/QApplication \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/qapplication.h \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/qcoreapplication.h \
@@ -1377,7 +1408,48 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtGui/qopenglext.h \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtGui/qopenglversionfunctions.h \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtGui/QImage \
-		ui_mainwindow.h
+		ui_mainwindow.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/QVariant \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/QAction \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/qaction.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/qactiongroup.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/QApplication \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/qapplication.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/qcoreapplication.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/qeventloop.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtGui/qguiapplication.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtGui/qinputmethod.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/QMenu \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/qmenu.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/QMenuBar \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/qmenubar.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/QPushButton \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/qpushbutton.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/QStatusBar \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/qstatusbar.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/QToolBar \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/qtoolbar.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtWidgets/QWidget \
+		glwidget.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtOpenGL/QGLWidget \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtOpenGL/qgl.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtGui/qpaintengine.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtGui/qpainter.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtGui/qtextoption.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtGui/qpen.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtOpenGL/qglcolormap.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtOpenGL/qtopenglglobal.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/QTimer \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/qtimer.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/qbasictimer.h \
+		../ClothLib/PBDObj.h \
+		../ClothLib/clothsimlib_global.h \
+		../ClothLib/point.h \
+		../ClothLib/constraints.h \
+		../ClothLib/collisionobj.h \
+		../ClothLib/lml.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
 
 glwidget.o: glwidget.cpp glwidget.h \
@@ -1501,9 +1573,17 @@ glwidget.o: glwidget.cpp glwidget.h \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/QTimer \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/qtimer.h \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/qbasictimer.h \
-		../ClothLib/ClothPBD.h \
-		../ClothLib/clothsimlib_global.h
+		../ClothLib/PBDObj.h \
+		../ClothLib/clothsimlib_global.h \
+		../ClothLib/point.h \
+		../ClothLib/constraints.h \
+		../ClothLib/collisionobj.h \
+		../ClothLib/lml.h \
+		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtGui/QKeyEvent
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o glwidget.o glwidget.cpp
+
+trackballcam.o: trackballcam.cpp trackballcam.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o trackballcam.o trackballcam.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp

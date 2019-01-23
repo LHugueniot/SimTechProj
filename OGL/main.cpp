@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "eventhandler.h"
 #include <QApplication>
 #include <GL/glut.h>
 

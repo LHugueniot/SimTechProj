@@ -719,7 +719,11 @@ main.o: main.cpp ../ClothLib/clothsimlib_global.h \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/qmutex.h \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/qnumeric.h \
 		/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
-		../ClothLib/ClothPBD.h
+		../ClothLib/PBDObj.h \
+		../ClothLib/point.h \
+		../ClothLib/constraints.h \
+		../ClothLib/collisionobj.h \
+		../ClothLib/lml.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 ####### Install

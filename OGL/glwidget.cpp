@@ -1,12 +1,15 @@
 #include "glwidget.h"
 #include <GL/glut.h>
+#include <QKeyEvent>
 
 GLWidget::GLWidget(QWidget *parent) :
     QGLWidget(parent)
 {
     connect(&timer, SIGNAL(timeout()), this, SLOT(updateGL()));
-    timer.start(16);
-
+    timer.start(1);
+    setFocusPolicy(Qt::StrongFocus);
+    CamPos={10,10,-10};
+    LookAt={0,0,0};
 }
 
 void GLWidget::initializeGL()
@@ -19,31 +22,30 @@ void GLWidget::initializeGL()
 
     PBD::Sphere * sphere=new PBD::Sphere(0.7, glm::vec3(0,-1,0));
     //Cloth.addObjectToList(sphere);
-    Cloth.initialize(glm::vec3(-1,2,0.2), 10, 10, 0.5, 1);
+    Cloth.initialize(glm::vec3(-1,2,0.2), 50, 50, 0.125, 1);
 
     Cloth.changePointMass(0,0);
     Cloth.changePointMass(Cloth.m_width*(Cloth.m_height-1),0);
-    //Cloth.changePointMass((Cloth.m_height-1),0);
-    //Cloth.changePointMass(99,0);
-    //Cloth.changePointMass(45,10);
 }
 
 void GLWidget::paintGL()
 {
+    glLoadIdentity();
+    gluLookAt(CamPos[0],CamPos[1],CamPos[2], LookAt[0], LookAt[1], LookAt[2], 0, 1, 0);
 
-    Cloth.runSolver(5);
+    Cloth.runSolver(2.5);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glColor3f(1, 0, 0.5);
 
-//    glBindBuffer(GL_ARRAY_BUFFER, buf1);
-//    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-//    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    //    glBindBuffer(GL_ARRAY_BUFFER, buf1);
+    //    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    //    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glPushMatrix();
-        //auto p=Cloth.OtherObjs[0]->m_pos;
-        //glTranslated(p.x,p.y,p.z);
-        //glutSolidSphere(Cloth.OtherObjs[0]->m_radius,20,20);
+    //auto p=Cloth.OtherObjs[0]->m_pos;
+    //glTranslated(p.x,p.y,p.z);
+    //glutSolidSphere(Cloth.OtherObjs[0]->m_radius,20,20);
     glPopMatrix();
 
     glBegin(GL_LINES);
@@ -58,6 +60,7 @@ void GLWidget::paintGL()
         glVertex3f(pB.x, pB.y, pB.z);
     }
     glEnd();
+    //gluLookAt(CamPos[0],CamPos[1],CamPos[2], LookAt[0], LookAt[1], LookAt[2], 0, 1, 0);
 
 }
 
@@ -69,5 +72,42 @@ void GLWidget::resizeGL(int w, int h)
     gluPerspective(45, (float)w/h, 0.01, 100.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(5,5,-5, 0,0,0, 0,1,0);
+    gluLookAt(CamPos[0],CamPos[1],CamPos[2], LookAt[0], LookAt[1], LookAt[2], 0, 1, 0);
+}
+
+//-------------------------------------------------------Camera manipulation--------------------------------------------
+
+void GLWidget::keyPressEvent(QKeyEvent *event)
+{
+    makeCurrent();
+    switch(event->key()){
+
+    case Qt::Key_Escape:
+        std::cout<<"Esc pressed";
+        break;
+    case Qt::Key_W:
+        CamPos[0]+=1;
+        LookAt[0]+=1;
+        break;
+    case Qt::Key_S:
+        CamPos[0]-=1;
+        LookAt[0]-=1;
+        break;
+    case Qt::Key_A:
+        CamPos[2]+=1;
+        LookAt[2]+=1;
+        break;
+    case Qt::Key_D:
+        CamPos[2]-=1;
+        LookAt[2]-=1;
+        break;
+    }
+}
+
+void GLWidget::keyReleaseEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Escape)
+    {
+        std::cout<<"Esc unpressed";
+    }
 }

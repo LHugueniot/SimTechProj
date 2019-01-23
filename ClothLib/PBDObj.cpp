@@ -58,23 +58,23 @@ void PBDobj::initialize(glm::vec3 _pos, int _width, int _height, float _patchsiz
             auto a1 = a0+ glm::vec3(m_patchsize, 0, 0);
             auto a2 = a0+ glm::vec3(0, 0, m_patchsize);
             auto a3 = a0+ glm::vec3(m_patchsize, 0, m_patchsize);
-            if(LML::aproximateVec3(b0,a1,0.05)==true ||
-                    LML::aproximateVec3(b0,a2,0.05)==true ||
-                    LML::aproximateVec3(b0,a3,0.05)==true)
+            if(LML::aproximateVec3(b0,a1,0.05) ||
+                    LML::aproximateVec3(b0,a2,0.05) ||
+                    LML::aproximateVec3(b0,a3,0.05))
             {
                 DistanceConstraint* _Con= new DistanceConstraint(m_PointsPtr[i], m_PointsPtr[j]);
                 addConstraint(_Con);
             }
 
         }
-    }
+    }/*
     for(uint p=0; p<m_ConPtrs.size(); p++)
     {
         auto pA = m_ConPtrs[p]->m_pA->m_ppos;
         auto pB = m_ConPtrs[p]->m_pB->m_ppos;
         //std::cout<<"PA ("<<pA.x<<" "<<pA.y<<" "<<pA.z<<") ";
         //std::cout<<"PB ("<<pB.x<<" "<<pB.y<<" "<<pB.z<<") \n";
-    }
+    }*/
 }
 
 
@@ -92,37 +92,35 @@ void PBDobj::runSolver(float dt)
         p.m_pvel+=m_grav*m_damp*p.m_invMass*inv_dt;
         p.tmp_pos=p.m_ppos+p.m_pvel*inv_dt;
 
-        if(OtherObjs.size()>0)
-        {
-            for(uint j=0; j<OtherObjs.size(); j++)
-            {
-                CollisionObj& o = *(OtherObjs[j]);
-                for(uint k=0; k<o.vertices.size(); k++)
-                {
-                    if(o.CheckCollision1(k,p.tmp_pos)==true)
-                    {
-                        //p.tmp_pos=p.m_ppos;
-                        //a+=0.05;
-                        //p.m_ppos-=p.m_pvel;
-                        //p.m_pvel-=p.m_pvel;
-                    }
-                }
-                //                o.CheckCollision(p);
-            }
-        }
+//        if(OtherObjs.size()>0)
+//        {
+//            for(uint j=0; j<OtherObjs.size(); j++)
+//            {
+//                CollisionObj& o = *(OtherObjs[j]);
+//                for(uint k=0; k<o.vertices.size(); k++)
+//                {
+//                    if(o.CheckCollision1(k,p.tmp_pos)==true)
+//                    {
+//                        //p.tmp_pos=p.m_ppos;
+//                        //a+=0.05;
+//                        //p.m_ppos-=p.m_pvel;
+//                        //p.m_pvel-=p.m_pvel;
+//                    }
+//                }
+//                //                o.CheckCollision(p);
+//            }
+//        }
     }
 
     //update constraints
 
-    for (uint i=0; i<5; i++)
+    for (uint i=0; i<30; i++)
     {
         for (uint i=0; i<m_ConPtrs.size(); i++)
         {
             m_ConPtrs[i]->update();
         }
     }
-    std::cout<<"\n";
-
 
     //update position
     for (uint i=0; i<m_PointsPtr.size(); i++)

@@ -44,3 +44,5 @@ unix {
     target.path = /usr/lib
     INSTALLS += target
 }
+
+QMAKE_CXXFLAGS+=-O3

@@ -14,7 +14,7 @@ CC            = gcc
 CXX           = g++
 DEFINES       = -DCLOTHSIMLIB_LIBRARY -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-CXXFLAGS      = -pipe -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
+CXXFLAGS      = -pipe -O3 -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 INCPATH       = -I. -I/opt/Qt5.11.1/5.11.1/gcc_64/include -I/opt/Qt5.11.1/5.11.1/gcc_64/include/QtCore -I. -I/opt/Qt5.11.1/5.11.1/gcc_64/mkspecs/linux-g++
 QMAKE         = /opt/Qt5.11.1/5.11.1/gcc_64/bin/qmake
 DEL_FILE      = rm -f
@@ -710,7 +710,7 @@ compiler_moc_predefs_make_all: moc_predefs.h
 compiler_moc_predefs_clean:
 	-$(DEL_FILE) moc_predefs.h
 moc_predefs.h: /opt/Qt5.11.1/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp
-	g++ -pipe -g -std=gnu++11 -Wall -W -dM -E -o moc_predefs.h /opt/Qt5.11.1/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp
+	g++ -pipe -O3 -g -std=gnu++11 -Wall -W -dM -E -o moc_predefs.h /opt/Qt5.11.1/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp
 
 compiler_moc_header_make_all:
 compiler_moc_header_clean:

@@ -22,8 +22,14 @@ public:
     void resizeGL(int w, int h);
     PBD::PBDobj Cloth;
     int time;
+    std::vector<float> CamPos;
+    std::vector<float> LookAt;
 private:
     QTimer timer;
+
+protected:
+    void keyPressEvent(QKeyEvent *);
+    void keyReleaseEvent(QKeyEvent *);
 };
 
 #endif // GLWIDGET_H
